@@ -6,6 +6,7 @@ import { SupportList } from '../components/SupportBox';
 import { showToast } from '../components/Toast';
 import { Field, Notice, Section } from '../components/ui';
 import { copyText, canShare, shareText } from '../lib/clipboard';
+import { levelOf } from '../lib/intensity';
 import { navigate } from '../lib/router';
 import { acceptanceSentence, buildSessionSheet, formatDate, understandingText } from '../lib/compose';
 import type { Feeling, SummaryData } from '../lib/types';
@@ -53,7 +54,7 @@ export function Summary({ entry, update, goStep, onExit, onDelete }: EntryScreen
                   {step1.emotions.length > 0 && (
                     <span className="tags">
                       {step1.emotions.map((e) => {
-                        const level = step1.intensities[e];
+                        const level = levelOf(step1.intensities, e);
                         return (
                           <span key={e} className="tag">
                             {e}

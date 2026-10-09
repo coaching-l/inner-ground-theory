@@ -2,19 +2,12 @@ import { STEP1_COPY } from '../content/app';
 import { BODY_REACTIONS, EMOTIONS, INTENSITY_LABELS } from '../content/reactions';
 import { BottomBar, Page, StepHeading, StepNav, TopBar } from '../components/layout';
 import { AddChip, ChipGroup, Field, Section } from '../components/ui';
+import { levelOf, orderEmotions, setLevel } from '../lib/intensity';
 import type { Step1Data } from '../lib/types';
 import type { EntryScreenProps } from './types';
 
 function toggle(list: string[], value: string): string[] {
   return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
-}
-
-/** 感情の強さを1つ変える。null なら外す */
-function setLevel(levels: Record<string, number>, emotion: string, level: number | null): Record<string, number> {
-  const next = { ...levels };
-  if (level === null) delete next[emotion];
-  else next[emotion] = level;
-  return next;
 }
 
 /** 刺激（出来事・解釈）と反応（感情・身体・思考・行動・願い）。quick のときは最小限の項目だけ出す */
@@ -56,13 +49,13 @@ export function Step1Fields(props: { data: Step1Data; set: (patch: Partial<Step1
               set(
                 data.emotions.includes(e)
                   ? { emotions: toggle(data.emotions, e), intensities: setLevel(data.intensities, e, null) }
-                  : { emotions: toggle(data.emotions, e) },
+                  : { emotions: orderEmotions(toggle(data.emotions, e)) },
               )
             }
           />
           <AddChip
             placeholder="ほかの感情を書き足す"
-            onAdd={(e) => !data.emotions.includes(e) && set({ emotions: [...data.emotions, e] })}
+            onAdd={(e) => !data.emotions.includes(e) && set({ emotions: orderEmotions([...data.emotions, e]) })}
           />
         </div>
 
@@ -76,7 +69,7 @@ export function Step1Fields(props: { data: Step1Data; set: (patch: Partial<Step1
             </p>
             <ul className="intensity-list">
               {data.emotions.map((emotion) => {
-                const level = data.intensities[emotion];
+                const level = levelOf(data.intensities, emotion);
                 return (
                   <li key={emotion} className="intensity-row">
                     <p className="intensity-head">

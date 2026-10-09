@@ -462,6 +462,8 @@ a {
 }
 
 .intensity-value {
+  flex-shrink: 0;
+  white-space: nowrap;
   font-size: 13px;
   font-weight: 700;
   color: var(--navy);
@@ -480,6 +482,11 @@ a {
 
 .scale-compact .scale-dot {
   margin-top: 0;
+  background: var(--input-border); /* 文字がないので、点そのものを背景に対して 3:1 以上に */
+}
+
+.scale-compact .scale-item.is-on .scale-dot {
+  background: var(--navy);
 }
 
 .segmented {
