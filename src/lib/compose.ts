@@ -70,6 +70,11 @@ export function acceptanceSentence(entry: Entry): string {
   return '';
 }
 
+/** 悔しさ（強い）のように、強さがあれば添える */
+export function withIntensity(emotion: string, level: number | undefined): string {
+  return level ? `${emotion}（${INTENSITY_LABELS[level]}）` : emotion;
+}
+
 function item(label: string, value: string): string[] {
   const v = value.trim();
   return v ? [`■ ${label}`, v, ''] : [];
@@ -85,8 +90,7 @@ export function buildSessionSheet(entry: Entry): string {
   out.push(...item('どう受け取ったか（解釈）', step1.interpretation));
   const feel: string[] = [];
   if (step1.emotions.length) {
-    const intensity = step1.intensity ? `（強さ：${INTENSITY_LABELS[step1.intensity]}）` : '';
-    feel.push(`感情：${step1.emotions.join('、')}${intensity}`);
+    feel.push(`感情：${step1.emotions.map((e) => withIntensity(e, step1.intensities[e])).join('、')}`);
   }
   if (step1.body.length) feel.push(`身体：${step1.body.join('、')}`);
   out.push(...item('感じていること・身体の反応', feel.join('\n')));

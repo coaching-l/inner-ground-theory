@@ -12,7 +12,8 @@ export interface Step1Data {
   event: string;
   interpretation: string;
   emotions: string[];
-  intensity: number | null;
+  /** 感情ごとの強さ（1〜5）。キーは感情の名前。未選択の感情は入らない */
+  intensities: Record<string, number>;
   body: string[];
   thoughts: string;
   action: string;
