@@ -47,7 +47,7 @@ export function draftUnderstanding(entry: Entry): string {
     const name = DOMAIN_BY_ID[id].name;
     return insight ? `${name}（${insight}）` : name;
   });
-  if (parts.length) lines.push(`その背景には、${joinJa(parts)}が関係していたのかもしれない。`);
+  if (parts.length) lines.push(`その背景には、${joinJa(parts)}が関わっていたのかもしれない。`);
 
   const protect = clean(step3.protect);
   if (protect) lines.push(`あの反応は、${protect}を守ろうとしていたのだと思う。`);
