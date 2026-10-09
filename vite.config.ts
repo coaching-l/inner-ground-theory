@@ -1,7 +1,7 @@
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// 外部への通信を一切させない（記録が外に出ないことを、ブラウザの仕組みでも保証する）。
+// ページから外部への通信（fetch・外部ファイルの読み込み）を、ブラウザの仕組みでも止める。
 // 開発用サーバーはインラインのスクリプトを使うため、公開用のビルドにだけ入れる
 const CONTENT_SECURITY_POLICY = [
   "default-src 'none'",

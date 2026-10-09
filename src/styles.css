@@ -6,8 +6,10 @@
   --navy: #042143;
   --navy-strong: #02172f;
   --heading: #042143;
-  --gold: #98783d;
-  --gold-line: #c09e5c;
+  --gold: #7a5f2c; /* 小さな文字に使う金（背景に対して 4.5:1 以上） */
+  --gold-line: #c09e5c; /* 飾りの線 */
+  --focus-ring: #98783d;
+  --input-border: #808c99; /* 入力欄の枠（背景に対して 3:1 以上） */
   --gold-soft: #f6f0e3;
   --navy-soft: #eaeef3;
   --bg: #f7f8fa;
@@ -30,8 +32,10 @@
     --navy: #c09e5c;
     --navy-strong: #0f3152;
     --heading: #f3f5f8;
-    --gold: #c09e5c;
+    --gold: #d6bd8a;
     --gold-line: #c09e5c;
+    --focus-ring: #c09e5c;
+    --input-border: #557699;
     --gold-soft: #26261f;
     --navy-soft: #0f3152;
     --bg: #02172f;
@@ -82,7 +86,7 @@ a {
 }
 
 :focus-visible {
-  outline: 3px solid var(--gold-line);
+  outline: 3px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -309,7 +313,7 @@ a {
 .textarea,
 .input {
   width: 100%;
-  border: 1px solid var(--line);
+  border: 1px solid var(--input-border);
   border-radius: 10px;
   background: var(--surface);
   color: var(--text);
@@ -328,7 +332,7 @@ a {
 
 .textarea::placeholder,
 .input::placeholder {
-  color: color-mix(in srgb, var(--muted) 70%, transparent);
+  color: var(--muted);
 }
 
 .textarea:focus,
@@ -496,7 +500,7 @@ a {
 
 .question-mark.is-done {
   background: var(--gold-line);
-  color: #fff;
+  color: #02172f;
 }
 
 .question-text {
@@ -545,7 +549,7 @@ a {
   width: 22px;
   height: 22px;
   border-radius: 6px;
-  border: 2px solid var(--line);
+  border: 2px solid var(--input-border);
   display: grid;
   place-items: center;
   font-size: 13px;
@@ -1096,6 +1100,19 @@ a {
   .stepnav .is-past button {
     border-top-color: color-mix(in srgb, var(--gold-line) 45%, var(--line));
   }
+
+  /* ダークでは紺も金になるので、選択中・種類の違いを別の手がかりで見せる */
+  .candidate {
+    border-left-color: var(--line);
+  }
+
+  .candidate.is-on {
+    background: var(--navy-soft);
+  }
+
+  .notice-navy {
+    border-left-color: var(--line);
+  }
 }
 
 .start-card-title {
@@ -1280,6 +1297,17 @@ a {
   color: var(--gold);
 }
 
+/* ダークでは紺も金になるので、セッションで扱うステップは線と番号を控えめにして区別する */
+@media (prefers-color-scheme: dark) {
+  .stepmap-session {
+    border-left-color: var(--line);
+  }
+
+  .stepmap-session .stepmap-no {
+    color: var(--muted);
+  }
+}
+
 /* ===== 相談窓口 ===== */
 .support-list {
   list-style: none;
@@ -1356,7 +1384,7 @@ a {
   .card {
     box-shadow: none;
     border: 1px solid #ccc;
-    border-top: 4px solid #1d3a5f;
+    border-top: 4px solid #042143;
     break-inside: avoid;
   }
 }
