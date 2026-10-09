@@ -34,8 +34,13 @@ describe('suggestDomains', () => {
   });
 
   it('感情が強いときは「感情」を候補に加える', () => {
-    const result = suggestDomains(step1({ emotions: ['怒り'], intensity: 5 }), []);
+    const result = suggestDomains(step1({ emotions: ['怒り', '不安'], intensities: { 怒り: 5, 不安: 2 } }), []);
     expect(result.map((r) => r.domain)).toEqual(['emotions']);
+    expect(result[0].reasons).toEqual(['「怒り」の強さが「強い」以上でした']);
+  });
+
+  it('どの感情も強くなければ「感情」は候補にしない', () => {
+    expect(suggestDomains(step1({ emotions: ['怒り', '不安'], intensities: { 怒り: 3, 不安: 1 } }), [])).toEqual([]);
   });
 
   it('点数の高い順に最大3つまで返す', () => {

@@ -3,6 +3,7 @@
 
 import { DOMAINS, type DomainId } from '../content/domains';
 import { KEYWORD_HINTS, SIGNS, STRONG_EMOTION_THRESHOLD, SUGGESTION_COUNT } from '../content/signs';
+import { levelOf } from './intensity';
 import type { Step1Data } from './types';
 
 export interface DomainSuggestion {
@@ -37,8 +38,9 @@ export function suggestDomains(step1: Step1Data, signIds: string[]): DomainSugge
     if (hint.pattern.test(text)) add(hint.domain, 1, hint.reason);
   }
 
-  if (step1.intensity !== null && step1.intensity >= STRONG_EMOTION_THRESHOLD) {
-    add('emotions', 1, '感情の強さが「強い」以上でした');
+  const strong = step1.emotions.filter((e) => (levelOf(step1.intensities, e) ?? 0) >= STRONG_EMOTION_THRESHOLD);
+  if (strong.length) {
+    add('emotions', 1, `${strong.map((e) => `「${e}」`).join('')}の強さが「強い」以上でした`);
   }
 
   const order = new Map(DOMAINS.map((d, i) => [d.id, i]));

@@ -6,6 +6,7 @@ import { SupportList } from '../components/SupportBox';
 import { showToast } from '../components/Toast';
 import { Field, Notice, Section } from '../components/ui';
 import { copyText, canShare, shareText } from '../lib/clipboard';
+import { levelOf } from '../lib/intensity';
 import { navigate } from '../lib/router';
 import { acceptanceSentence, buildSessionSheet, formatDate, understandingText } from '../lib/compose';
 import type { Feeling, SummaryData } from '../lib/types';
@@ -52,12 +53,15 @@ export function Summary({ entry, update, goStep, onExit, onDelete }: EntryScreen
                 <dd>
                   {step1.emotions.length > 0 && (
                     <span className="tags">
-                      {step1.emotions.map((e) => (
-                        <span key={e} className="tag">
-                          {e}
-                        </span>
-                      ))}
-                      {step1.intensity && <span className="tag tag-muted">強さ：{INTENSITY_LABELS[step1.intensity]}</span>}
+                      {step1.emotions.map((e) => {
+                        const level = levelOf(step1.intensities, e);
+                        return (
+                          <span key={e} className="tag">
+                            {e}
+                            {level && <span className="tag-level">{INTENSITY_LABELS[level]}</span>}
+                          </span>
+                        );
+                      })}
                     </span>
                   )}
                   {step1.body.length > 0 && <span className="card-sub">身体：{step1.body.join('、')}</span>}

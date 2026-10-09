@@ -2,6 +2,7 @@ import { STEP1_COPY } from '../content/app';
 import { BODY_REACTIONS, EMOTIONS, INTENSITY_LABELS } from '../content/reactions';
 import { BottomBar, Page, StepHeading, StepNav, TopBar } from '../components/layout';
 import { AddChip, ChipGroup, Field, Section } from '../components/ui';
+import { levelOf, orderEmotions, setLevel } from '../lib/intensity';
 import type { Step1Data } from '../lib/types';
 import type { EntryScreenProps } from './types';
 
@@ -44,32 +45,58 @@ export function Step1Fields(props: { data: Step1Data; set: (patch: Partial<Step1
             label={STEP1_COPY.emotionLabel}
             options={[...EMOTIONS, ...customEmotions]}
             selected={data.emotions}
-            onToggle={(e) => set({ emotions: toggle(data.emotions, e) })}
+            onToggle={(e) =>
+              set(
+                data.emotions.includes(e)
+                  ? { emotions: toggle(data.emotions, e), intensities: setLevel(data.intensities, e, null) }
+                  : { emotions: orderEmotions(toggle(data.emotions, e)) },
+              )
+            }
           />
           <AddChip
             placeholder="ほかの感情を書き足す"
-            onAdd={(e) => !data.emotions.includes(e) && set({ emotions: [...data.emotions, e] })}
+            onAdd={(e) => !data.emotions.includes(e) && set({ emotions: orderEmotions([...data.emotions, e]) })}
           />
         </div>
 
         {!quick && data.emotions.length > 0 && (
           <div className="field">
             <p className="field-label">{STEP1_COPY.intensityLabel}</p>
-            <div className="scale" role="radiogroup" aria-label={STEP1_COPY.intensityLabel}>
-              {[1, 2, 3, 4, 5].map((n) => (
-                <button
-                  key={n}
-                  type="button"
-                  role="radio"
-                  aria-checked={data.intensity === n}
-                  className={`scale-item ${data.intensity === n ? 'is-on' : ''}`}
-                  onClick={() => set({ intensity: data.intensity === n ? null : n })}
-                >
-                  <span className="scale-dot" style={{ ['--size' as string]: `${8 + n * 3}px` }} />
-                  <span className="scale-label">{INTENSITY_LABELS[n]}</span>
-                </button>
-              ))}
-            </div>
+            <p className="field-hint">{STEP1_COPY.intensityHint}</p>
+            <p className="scale-legend" aria-hidden="true">
+              <span>{INTENSITY_LABELS[1]}</span>
+              <span>{INTENSITY_LABELS[5]}</span>
+            </p>
+            <ul className="intensity-list">
+              {data.emotions.map((emotion) => {
+                const level = levelOf(data.intensities, emotion);
+                return (
+                  <li key={emotion} className="intensity-row">
+                    <p className="intensity-head">
+                      <span className="intensity-name">{emotion}</span>
+                      <span className={`intensity-value ${level ? '' : 'is-empty'}`}>
+                        {level ? INTENSITY_LABELS[level] : '未選択'}
+                      </span>
+                    </p>
+                    <div className="scale scale-compact" role="radiogroup" aria-label={`${emotion}の強さ`}>
+                      {[1, 2, 3, 4, 5].map((n) => (
+                        <button
+                          key={n}
+                          type="button"
+                          role="radio"
+                          aria-checked={level === n}
+                          aria-label={INTENSITY_LABELS[n]}
+                          className={`scale-item ${level === n ? 'is-on' : ''}`}
+                          onClick={() => set({ intensities: setLevel(data.intensities, emotion, level === n ? null : n) })}
+                        >
+                          <span className="scale-dot" style={{ ['--size' as string]: `${8 + n * 3}px` }} />
+                        </button>
+                      ))}
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
           </div>
         )}
 

@@ -10,7 +10,7 @@ function sample(): Entry {
     event: '会議で企画に「詰めが甘い」と言われた。',
     interpretation: '能力を否定されたと感じた',
     emotions: ['悔しさ', '不安'],
-    intensity: 4,
+    intensities: { 悔しさ: 4, 不安: 2 },
     body: ['胸が苦しい・ざわざわする'],
     thoughts: 'やっぱり自分は詰めが甘い',
   };
@@ -83,7 +83,7 @@ describe('buildSessionSheet', () => {
     expect(a).toBeGreaterThan(0);
     expect(b).toBeGreaterThan(a);
     expect(c).toBeGreaterThan(b);
-    expect(sheet).toContain('感情：悔しさ、不安（強さ：強い）');
+    expect(sheet).toContain('感情：悔しさ（強い）、不安（少し）');
     expect(sheet).toContain('■ 今回、特に深めたい領域：ビリーフ、自己概念');
     expect(sheet).toContain('A．企画は最初から完璧であるべき');
     expect(sheet).toContain('今の私には、期待に応えようとして、自分を追い込みやすいという側面がある。');
