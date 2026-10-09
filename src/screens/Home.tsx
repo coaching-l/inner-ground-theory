@@ -1,6 +1,6 @@
-import { APP_NAME, APP_TAGLINE, BRAND, KEY_MESSAGE } from '../content/app';
+import { APP_TAGLINE, BRAND, KEY_MESSAGE } from '../content/app';
 import { DOMAIN_BY_ID } from '../content/domains';
-import { Page } from '../components/layout';
+import { BrandHeader, Page } from '../components/layout';
 import { formatDate } from '../lib/compose';
 import { navigate } from '../lib/router';
 import type { Entry } from '../lib/types';
@@ -63,11 +63,10 @@ export function Home(props: { entries: Entry[]; onStart: () => void; onQuick: ()
   const inProgress = props.entries.filter((e) => e.status !== 'done').slice(0, 3);
   return (
     <Page className="home">
-      <header className="hero">
-        <p className="hero-brand">{BRAND}</p>
-        <h1 className="hero-title">{APP_NAME}</h1>
+      <div className="hero">
+        <BrandHeader />
         <p className="hero-tagline">{APP_TAGLINE}</p>
-      </header>
+      </div>
 
       <div className="start-cards">
         <button type="button" className="start-card start-card-primary" onClick={props.onStart}>

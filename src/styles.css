@@ -1,39 +1,46 @@
-/* ===== 色・文字（COACHING-L のネイビーとゴールド） ===== */
+/* ===== 色・文字 =====
+   色は COACHING-L の各ツール（人生の輪・問いカード・ポモドーロタイマー）とそろえています。
+   紺 #042143 / 濃い紺 #02172f / 金 #c09e5c / 濃い金 #98783d / 背景 #f7f8fa / 文字 #293746
+   --navy はボタンや選択中の色（ダークモードでは金）、--heading は見出しの色 */
 :root {
-  --navy: #1d3a5f;
-  --navy-strong: #142a47;
-  --gold: #9c7629;
-  --gold-line: #c9a457;
-  --gold-soft: #f7f0df;
-  --navy-soft: #edf1f7;
-  --bg: #f7f5f0;
+  --navy: #042143;
+  --navy-strong: #02172f;
+  --heading: #042143;
+  --gold: #98783d;
+  --gold-line: #c09e5c;
+  --gold-soft: #f6f0e3;
+  --navy-soft: #eaeef3;
+  --bg: #f7f8fa;
   --surface: #ffffff;
-  --text: #1f2933;
-  --muted: #5d6877;
-  --line: #e2ddd2;
+  --text: #293746;
+  --muted: #5f6d7c;
+  --line: #e0e5ea;
   --danger: #a33a32;
   --on-navy: #ffffff;
-  --shadow: 0 1px 2px rgba(20, 42, 71, 0.06), 0 4px 16px rgba(20, 42, 71, 0.06);
+  --shadow: 0 8px 24px rgba(2, 23, 47, 0.08);
   --radius: 14px;
-  --font: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Yu Gothic UI', 'Meiryo', system-ui, sans-serif;
+  --font: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Noto Sans JP', 'Hiragino Sans',
+    'Hiragino Kaku Gothic ProN', 'Yu Gothic UI', 'Yu Gothic', 'Meiryo', system-ui, sans-serif;
   color-scheme: light;
 }
 
+/* ダークモード（端末の設定に合わせて自動で切り替え）。紺を背景にして、金を差し色にする */
 @media (prefers-color-scheme: dark) {
   :root {
-    --navy: #9db8de;
-    --navy-strong: #c4d5ee;
-    --gold: #d6b26a;
-    --gold-line: #b8954d;
-    --gold-soft: #2a2416;
-    --navy-soft: #1b2738;
-    --bg: #0f151d;
-    --surface: #18212c;
-    --text: #e6eaf0;
-    --muted: #9ba6b4;
-    --line: #2b3646;
+    --navy: #c09e5c;
+    --navy-strong: #0f3152;
+    --heading: #f3f5f8;
+    --gold: #c09e5c;
+    --gold-line: #c09e5c;
+    --gold-soft: #26261f;
+    --navy-soft: #0f3152;
+    --bg: #02172f;
+    --surface: #0a2945;
+    --text: #e9edf1;
+    --muted: #a8b4c2;
+    --line: #24476b;
     --danger: #f08a80;
-    --on-navy: #0f151d;
+    --on-navy: #02172f;
     --shadow: none;
     color-scheme: dark;
   }
@@ -228,7 +235,7 @@ a {
 }
 
 .step-title {
-  color: var(--navy);
+  color: var(--heading);
   font-size: 23px;
   line-height: 1.45;
   margin: 4px 0 10px;
@@ -262,7 +269,7 @@ a {
 
 .section-title {
   font-size: 17px;
-  color: var(--navy);
+  color: var(--heading);
   padding-bottom: 8px;
   margin-bottom: 14px;
   border-bottom: 2px solid var(--gold-line);
@@ -587,7 +594,7 @@ a {
 .candidate-name {
   font-weight: 700;
   font-size: 17px;
-  color: var(--navy);
+  color: var(--heading);
 }
 
 .candidate-lead {
@@ -703,7 +710,7 @@ a {
 
 .domain-card-name {
   font-size: 18px;
-  color: var(--navy);
+  color: var(--heading);
 }
 
 .domain-card-lead {
@@ -926,7 +933,7 @@ a {
 
 .card-brand {
   font-weight: 700;
-  color: var(--navy);
+  color: var(--heading);
 }
 
 .card-date {
@@ -1004,25 +1011,41 @@ a {
 
 /* ===== ホーム ===== */
 .hero {
-  text-align: center;
-  padding: 28px 0 24px;
+  padding: 24px 0 28px;
 }
 
-.hero-brand {
-  font-size: 13px;
+/* ロゴ＋COACHING-L の組み方は各ツールと同じ */
+.brand-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-logo {
+  flex: none;
+  width: 52px;
+  height: 52px;
+}
+
+.brand-name {
+  color: var(--heading);
+  font-size: 1.125rem;
   font-weight: 700;
-  letter-spacing: 0.16em;
-  color: var(--gold);
+  line-height: 1.25;
+  letter-spacing: 0.14em;
 }
 
-.hero-title {
-  font-size: 30px;
-  color: var(--navy);
+.app-title {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--muted);
   letter-spacing: 0.08em;
-  margin: 6px 0;
 }
 
 .hero-tagline {
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 1px solid var(--gold-line);
   color: var(--muted);
   font-size: 15px;
 }
@@ -1062,6 +1085,17 @@ a {
 
 .start-card-primary .start-card-kicker {
   color: var(--gold-line);
+}
+
+@media (prefers-color-scheme: dark) {
+  .start-card-primary .start-card-kicker {
+    color: var(--on-navy);
+    opacity: 0.75;
+  }
+
+  .stepnav .is-past button {
+    border-top-color: color-mix(in srgb, var(--gold-line) 45%, var(--line));
+  }
 }
 
 .start-card-title {

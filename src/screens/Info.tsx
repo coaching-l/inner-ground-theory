@@ -1,5 +1,5 @@
-import { APP_NAME, APP_TAGLINE, BRAND, DISCLAIMER, KEY_MESSAGE } from '../content/app';
-import { Page } from '../components/layout';
+import { APP_TAGLINE, BRAND, DISCLAIMER, KEY_MESSAGE } from '../content/app';
+import { BrandHeader, Page } from '../components/layout';
 import { SupportList } from '../components/SupportBox';
 import { Notice, Section } from '../components/ui';
 
@@ -29,11 +29,10 @@ function StepMap() {
 export function Welcome(props: { onStart: () => void }) {
   return (
     <Page className="welcome">
-      <header className="hero">
-        <p className="hero-brand">{BRAND}</p>
-        <h1 className="hero-title">{APP_NAME}</h1>
+      <div className="hero">
+        <BrandHeader />
         <p className="hero-tagline">{APP_TAGLINE}</p>
-      </header>
+      </div>
       <Notice tone="navy">
         <p>{KEY_MESSAGE}</p>
       </Notice>
@@ -96,6 +95,14 @@ export function About(props: { onClearAll: () => void }) {
         <p>
           記録はこの端末のブラウザの中にだけ保存されます。ブラウザの履歴やサイトデータを消すと、記録も消えます。別の端末とは共有されません。
         </p>
+        <ul className="bullets">
+          <li>
+            LINE などのアプリの中で開いたときと、Safari や Chrome で開いたときとでは、保存場所が別々です。ホーム画面に追加したアイコンから開いたときも別になります。いつも同じ開き方で使ってください。
+          </li>
+          <li>
+            iPhone・Mac の Safari は、しばらく開かなかったサイトの記録を自動で消すことがあります。残しておきたい内容は、まとめ画面の「セッション準備シートをコピー」や「印刷・PDFで保存」で手元に残してください。
+          </li>
+        </ul>
         <button
           type="button"
           className="btn btn-danger-text"

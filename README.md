@@ -5,6 +5,7 @@ COACHING-L「内的土壌理論・内的土壌成長モデル」の **STEP1〜3�
 - AIは使っていません。候補の出し方などは、すべて `src/content/` のルールで決まります。
 - 記録は**利用者の端末（ブラウザ）の中だけ**に保存されます。サーバーへの送信はありません。
 - スマホのブラウザで使う前提の画面です（ホーム画面に追加して、アプリのように使うこともできます）。
+- COACHING-L のほかのツール（人生の輪・問いカード・ポモドーロタイマー）と同じ配色・ロゴで、**https://tools.coaching-l.net/inner-ground-theory/** に公開します。
 
 ## できること
 
@@ -37,6 +38,76 @@ STEP4〜6（意思決定・行動・内省・統合）は、コーチとのセ�
 - [ ] 「ご利用にあたって」の文言（`src/content/app.ts` の `DISCLAIMER`）
 - [ ] アプリ名（仮で「内的土壌ノート」にしています）
 - [ ] 10領域の問いの選び方（行動の設計に踏み込む問いは、意図的に外しています）
+- [ ] tools.coaching-l.net のツール一覧に載せるか（既存クライアント向けなので、載せずにURLを直接伝える使い方もできます）
+
+## GitHub Pages で公開する
+
+COACHING-L のほかのツールと同じく、GitHub Pages（GitHub の公開機能。無料）で公開します。組織 `coaching-l` には独自ドメイン `tools.coaching-l.net` が設定されているので、公開先は次のURLになります。
+
+**https://tools.coaching-l.net/inner-ground-theory/**
+
+`https://coaching-l.github.io/inner-ground-theory/` で開いても、GitHub が自動で上のURLに転送します。
+
+### 最初に1回だけ：公開の設定
+
+リポジトリの管理者（admin）またはメンテナー（maintain）の権限がある人が、GitHub の画面で設定します。変更を main に入れる**前に**済ませておくと、最初の公開がそのまま通ります。
+
+1. GitHub で `coaching-l/inner-ground-theory` を開く
+2. 上のタブの **Settings**（歯車のマーク）を開く（画面が狭いと「…」メニューの中にあります）
+3. 左のメニューの **Pages** を開く
+4. 「Build and deployment」の **Source** で **GitHub Actions** を選ぶ
+
+ほかのツールは「Deploy from a branch」で公開していますが、このアプリは公開の前にビルド（公開用ファイルの組み立て）が必要なため、**GitHub Actions** を選びます。
+
+選んだあとに GitHub がワークフローのひな形（「Configure」ボタン）をすすめてきますが、**押さずにそのままにしてください**。公開の手順は `.github/workflows/deploy.yml` に用意してあります。
+
+### 公開のしかた
+
+- 変更が **main ブランチに入ると（プルリクエストをマージすると）、自動で公開されます**。ファイルを手で置く必要はありません。
+- 公開の前に自動でテストをします。テストが通ったときだけ公開され、失敗したときは公開中のページは前のままです。
+- プルリクエストの段階では、テストとビルドの確認だけをします（公開はしません）。
+- 反映まで数分かかります。前の表示が残っていたら、少し待ってから再読み込みしてください。
+- 公開し直したいとき：**Actions** タブ → 左の「GitHub Pages に公開」→ **Run workflow**（ブランチは `main` のまま）。
+
+### 進み具合を見る
+
+リポジトリ上部の **Actions** タブで見られます。
+
+| 表示 | 意味 |
+|---|---|
+| 黄色の丸 | 実行中 |
+| 緑のチェック | 成功。ブランチが `main` の実行なら公開できています（プルリクエストの実行は、テストとビルドが通ったという意味で、公開はしていません） |
+| 赤のバツ | 失敗しました（公開中のページは前のまま） |
+| 灰色 | 新しい実行に置き換えられて止まりました。いちばん新しい実行が緑のチェックなら問題ありません |
+
+公開できると、Settings → Pages の上部に「Your site is live at …」と表示されます。
+
+### ツール一覧に載せる（任意）
+
+tools.coaching-l.net のトップページ（リポジトリ `coaching-l/coaching-l.github.io`）に載せるときは、そのリポジトリの README「ツールを足すとき」の手順で、`index.html` にリンク（`/inner-ground-theory/`）を1つ足します。
+
+### だれが見られるか・記録の保存について
+
+- **URLを知っている人なら、だれでも開けます**（パスワードはかかりません）。検索結果に出ないよう `noindex` を設定しています。ただし、URLがどこかに貼られれば、そこから開くことはできます。
+- リポジトリが公開（public）なので、アプリの文章や問いは GitHub 上でもだれでも読めます。
+- 利用者が書いた記録は、**それぞれの端末（ブラウザ）の中だけに保存されます**。GitHub にも、コーチにも、ほかの利用者にも送られません。公開用のページには、外部への通信そのものを禁止する設定（Content-Security-Policy）を入れています。
+- **記録の保存場所は、開き方ごとに別々です。** 次の場合、それまでの記録は引き継がれません。
+  - LINE などのアプリの中で開いたページは、そのアプリの中に保存されます。コーチが LINE で URL を送るときは、末尾に `?openExternalBrowser=1` を付けると、LINE の中ではなく端末のブラウザで開きます（例：`https://tools.coaching-l.net/inner-ground-theory/?openExternalBrowser=1`）。
+  - iPhone でホーム画面に追加したアイコンから開くと、Safari とは別の保存場所になります。使い始める前に、どこで開いて使うかを決めておくのがおすすめです。
+- iPhone・Mac の Safari は、しばらく開かなかったサイトの保存データを自動で消すことがあります。残しておきたい内容は、まとめ画面の「セッション準備シートをコピー」や「印刷・PDFで保存」で手元に残してください。
+- 同じドメイン（tools.coaching-l.net）のページどうしは、ブラウザの中の保存場所が共通です。同じ持ち主のほかのページから、この記録を読み書きできてしまう点に注意してください（組織に新しいページを足すときは、中身を確認してください）。
+- 組織の独自ドメインを変えたり外したりすると、それまでの記録は新しいURLでは見えなくなります。
+
+### うまくいかないとき
+
+| こんなとき | 原因と対処 |
+|---|---|
+| Settings や Pages が見当たらない、Source を選べない | 画面が狭いと Settings は「…」メニューの中にあります。それでも見当たらないときは、管理者（admin）かメンテナー（maintain）の権限が必要です |
+| 赤のバツで「Get Pages site failed」「Ensure GitHub Pages has been enabled」と出る | 最初の設定（Source を GitHub Actions に）がまだです。設定してから、Actions タブ →「GitHub Pages に公開」→ **Run workflow** で公開し直してください |
+| Actions タブに何も出ない、または「not allowed to be used」と出る | 組織かリポジトリの設定で GitHub Actions が止められています。組織のオーナーに、Actions の有効化と「GitHub 製のアクション（actions/…）の許可」を頼んでください |
+| 赤のバツで「Run npm test」が失敗している | テストが通っていません。アプリの中身を直す必要があるので、開発を担当した人に見てもらってください |
+| 赤のバツで「not allowed to deploy to github-pages」と出る | Settings → Environments → github-pages の「Deployment branches and tags」に `main` が入っているか確認してください |
+| 緑のチェックなのに表示が変わらない | ブランチが `main` の実行かを確かめてください。`main` なら、数分待ってから再読み込みしてください |
 
 ## 開発者向け
 
@@ -47,7 +118,9 @@ npm test           # テスト
 npm run build      # 公開用ファイルを dist/ に出力
 ```
 
-`dist/` フォルダの中身を、静的サイトを置けるサービス（Netlify、Vercel、Cloudflare Pages、GitHub Pages など）に置けば公開できます。どのURL配下に置いても動くようにしてあります。
+公開は GitHub Actions（`.github/workflows/deploy.yml`）で自動化しています。main への push と、main を選んだ手動実行（Run workflow）では `npm ci` → `npm test` → `npm run build` のあと `dist/` を GitHub Pages に配置します。main 向けのプルリクエストや、main 以外を選んだ手動実行では、テストとビルドまでです。CI の Node.js は `.nvmrc`（24）に合わせています。
+
+`base: './'` とハッシュ形式のURL（`#/...`）なので `/inner-ground-theory/` のようなサブパスでもそのまま動き、`404.html` や `.nojekyll` は不要です。公開用のビルドにだけ Content-Security-Policy を入れています（`vite.config.ts`。開発用サーバーはインラインのスクリプトを使うため入れていません）。アイコン（`public/icons/`）は COACHING-L の各ツールと共通のものです。
 
 構成：React + TypeScript + Vite。画面は `src/screens/`、処理は `src/lib/`（候補の算出 `suggest.ts`、文章の組み立て `compose.ts`、保存 `storage.ts`）。
 

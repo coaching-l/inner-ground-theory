@@ -1,7 +1,20 @@
 import type { ReactNode } from 'react';
-import { APP_NAME, STEPS } from '../content/app';
+import { APP_NAME, BRAND, STEPS } from '../content/app';
 import { navigate } from '../lib/router';
 import type { StepNo } from '../lib/types';
+
+/** ロゴ＋COACHING-L＋アプリ名（COACHING-L の各ツールと同じ組み方） */
+export function BrandHeader() {
+  return (
+    <header className="brand-header">
+      <img className="brand-logo" src="icons/logo-144.png" width={52} height={52} alt="" />
+      <div>
+        <p className="brand-name">{BRAND}</p>
+        <h1 className="app-title">{APP_NAME}</h1>
+      </div>
+    </header>
+  );
+}
 
 export function TopBar(props: { title?: string; onBack?: () => void; backLabel?: string; right?: ReactNode }) {
   return (
