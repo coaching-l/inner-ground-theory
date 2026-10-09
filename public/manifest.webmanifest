@@ -1,0 +1,14 @@
+{
+  "name": "内的土壌ノート",
+  "short_name": "内的土壌ノート",
+  "description": "COACHING-L 内的土壌理論にもとづく、自己理解のためのノート",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f7f5f0",
+  "theme_color": "#1d3a5f",
+  "lang": "ja",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
