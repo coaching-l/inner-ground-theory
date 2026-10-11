@@ -1,4 +1,4 @@
-import { APP_NAME, SUMMARY_COPY } from '../content/app';
+import { APP_NAME, SHEET_COPY, SUMMARY_COPY } from '../content/app';
 import { DOMAIN_BY_ID } from '../content/domains';
 import { INTENSITY_LABELS } from '../content/reactions';
 import { BottomBar, Page, StepNav, TopBar } from '../components/layout';
@@ -32,7 +32,7 @@ export function Summary({ entry, update, goStep, onExit, onDelete }: EntryScreen
         <div className="step-heading no-print">
           <p className="eyebrow">まとめ</p>
           <h1 className="step-title">今回の内省カード</h1>
-          <p className="lead">ここまでの内容を一枚にまとめました。セッション前に見返したり、コーチに共有したりできます。</p>
+          <p className="lead">{pick(SUMMARY_COPY.lead, tone)}</p>
         </div>
 
         <article className="card print-area">
@@ -107,7 +107,7 @@ export function Summary({ entry, update, goStep, onExit, onDelete }: EntryScreen
           )}
           {summary.nextSign.trim() && (
             <div className="card-next">
-              <p className="card-quote-label">次に気づきたいサイン</p>
+              <p className="card-quote-label">{pick(SHEET_COPY.nextSign, tone)}</p>
               <p className="prewrap">{summary.nextSign}</p>
             </div>
           )}
@@ -115,14 +115,15 @@ export function Summary({ entry, update, goStep, onExit, onDelete }: EntryScreen
 
         <Section className="no-print">
           <Field
-            label={SUMMARY_COPY.nextSignLabel}
-            hint={SUMMARY_COPY.nextSignHint}
+            label={pick(SUMMARY_COPY.nextSignLabel, tone)}
+            hint={pick(SUMMARY_COPY.nextSignHint, tone)}
             value={summary.nextSign}
             onChange={(nextSign) => set({ nextSign })}
             placeholder={pick(SUMMARY_COPY.nextSignPlaceholder, tone)}
           />
           <Field
-            label={SUMMARY_COPY.coachNoteLabel}
+            label={pick(SUMMARY_COPY.coachNoteLabel, tone)}
+            hint={pick(SUMMARY_COPY.coachNoteHint, tone) || undefined}
             value={summary.coachNote}
             onChange={(coachNote) => set({ coachNote })}
             placeholder={pick(SUMMARY_COPY.coachNotePlaceholder, tone)}
@@ -152,8 +153,8 @@ export function Summary({ entry, update, goStep, onExit, onDelete }: EntryScreen
         </Section>
 
         <Section className="no-print">
-          <Notice tone="navy" title="この先は、セッションで">
-            <p>{SUMMARY_COPY.bridge}</p>
+          <Notice tone={tone === 'positive' ? 'gold' : 'navy'} title={pick(SUMMARY_COPY.bridgeTitle, tone)}>
+            <p>{pick(SUMMARY_COPY.bridge, tone)}</p>
           </Notice>
           <div className="actions">
             <button type="button" className="btn btn-outline" onClick={copySheet}>

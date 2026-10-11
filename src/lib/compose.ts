@@ -132,8 +132,8 @@ export function buildSessionSheet(entry: Entry): string {
     .filter((s) => s.trim())
     .join('\n');
   out.push(...item(pick(SHEET_COPY.accept, tone), accept));
-  out.push(...item('次に気づきたいサイン', summary.nextSign));
-  out.push(...item('セッションで話したいこと', summary.coachNote));
+  out.push(...item(pick(SHEET_COPY.nextSign, tone), summary.nextSign));
+  out.push(...item(pick(SHEET_COPY.coachNote, tone), summary.coachNote));
 
   return out.join('\n').replace(/\n{3,}/g, '\n\n').trim() + '\n';
 }

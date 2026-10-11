@@ -1,4 +1,4 @@
-import { APP_TAGLINE, BRAND, DISCLAIMER, KEY_MESSAGE } from '../content/app';
+import { APP_TAGLINE, BRAND, DISCLAIMER, KEY_MESSAGE, STEPMAP_NOTE } from '../content/app';
 import { BrandHeader, Page } from '../components/layout';
 import { Notice, Section } from '../components/ui';
 
@@ -40,6 +40,7 @@ export function Welcome(props: { onStart: () => void }) {
           日常の出来事（刺激）と、そのときの自分の反応を手がかりに、内的土壌成長モデルのSTEP1〜3をひとりで進めるためのノートです。引っかかった出来事も、うれしかった出来事も、同じ流れでふりかえれます。
         </p>
         <StepMap />
+        <p className="small stepmap-note">{STEPMAP_NOTE}</p>
       </Section>
       <Section title="ご利用にあたって">
         <ul className="bullets">
@@ -71,6 +72,7 @@ export function About(props: { onClearAll: () => void }) {
       </Section>
       <Section title="6ステップと、このアプリの範囲">
         <StepMap />
+        <p className="small stepmap-note">{STEPMAP_NOTE}</p>
         <p className="small">
           ステップは一方向・同じ順序で進むものではありません。必要に応じて行き来しながら、理解と統合を深めます。
         </p>
