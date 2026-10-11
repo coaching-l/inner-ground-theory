@@ -104,6 +104,7 @@ describe('うれしかった・満たされた出来事', () => {
       wish: '人の役に立てている実感',
     };
     e.step3 = { ...e.step3, protect: '人の成長に関わること', acceptMode: 'notyet' };
+    e.summary = { ...e.summary, nextSign: '相手の話を最後まで聞いてから伝える', coachNote: 'うれしかった経験を分かち合いたい' };
     return e;
   }
 
@@ -129,6 +130,9 @@ describe('うれしかった・満たされた出来事', () => {
     expect(sheet).toContain('■ 何が満たされていたと感じるか\n人の役に立てている実感');
     expect(sheet).toContain('■ 何を大切にしていると知らせていたか');
     expect(sheet).toContain('■ 受け取りたい現在の自分');
+    expect(sheet).toContain('■ 繰り返していきたい考え方・動き方\n相手の話を最後まで聞いてから伝える');
+    expect(sheet).toContain('■ コーチと分かち合いたいこと\nうれしかった経験を分かち合いたい');
+    expect(sheet).not.toContain('次に気づきたいサイン');
     expect(sheet).toContain('感情：喜び、感謝（とても強い）、不安');
   });
 
@@ -136,6 +140,14 @@ describe('うれしかった・満たされた出来事', () => {
     const e = warm();
     e.step1.tone = 'mixed';
     expect(buildSessionSheet(e)).toContain('■ ふりかえった出来事：引っかかったことと、うれしかったことの両方がある');
+  });
+
+  it('引っかかった出来事では、これまでどおり「気づきたいサイン」「セッションで話したいこと」', () => {
+    const e = sample();
+    e.summary = { ...e.summary, nextSign: '肩に力が入ったとき', coachNote: '任せ方について' };
+    const sheet = buildSessionSheet(e);
+    expect(sheet).toContain('■ 次に気づきたいサイン\n肩に力が入ったとき');
+    expect(sheet).toContain('■ セッションで話したいこと\n任せ方について');
   });
 
   it('種類を選んでいない記録は、シートに種類の行を出さない', () => {
