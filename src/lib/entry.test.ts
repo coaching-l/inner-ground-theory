@@ -26,3 +26,25 @@ describe('normalizeEntry', () => {
     expect(normalizeEntry(JSON.parse(JSON.stringify(e))).step1.intensities).toEqual({ 悔しさ: 5 });
   });
 });
+
+describe('言い回しを変えた問い', () => {
+  it('以前の問いへの答えを、今の言い回しの問いに引き継ぐ', () => {
+    const e = createEntry();
+    e.step3.answers = { '今の自分には、どのような事情がありましたか': '寝不足だった', 'すぐに変えられない部分を、どう扱えますか': '少しずつ' };
+    const answers = normalizeEntry(JSON.parse(JSON.stringify(e))).step3.answers;
+    expect(answers).toEqual({
+      'そう感じたのも無理はない、と思える事情はありますか（疲れ・忙しさ・役割・過去の経験など）': '寝不足だった',
+      'すぐに変えられない部分を、どう扱えますか': '少しずつ',
+    });
+  });
+
+  it('今の問いにすでに答えがあれば、そちらを残す', () => {
+    const e = createEntry();
+    e.step3.answers = {
+      '今の自分には、どのような事情がありましたか': '古い答え',
+      'そう感じたのも無理はない、と思える事情はありますか（疲れ・忙しさ・役割・過去の経験など）': '新しい答え',
+    };
+    const answers = normalizeEntry(JSON.parse(JSON.stringify(e))).step3.answers;
+    expect(Object.values(answers)).toEqual(['新しい答え']);
+  });
+});
