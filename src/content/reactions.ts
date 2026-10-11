@@ -36,7 +36,7 @@ export const TENSE_BODY_REACTIONS: string[] = [
   '手やあごに力が入る',
   '心臓がどきどきする',
   'どっと疲れる・だるい',
-  '力が抜ける',
+  'がっくり力が抜ける',
 ];
 
 /** ゆるむ・軽い身体の反応 */
@@ -46,6 +46,7 @@ export const WARM_BODY_REACTIONS: string[] = [
   '呼吸が深く、ゆったりする',
   '自然と顔がほころぶ',
   '力が湧いてくる',
+  '胸が高鳴る・心がはずむ',
 ];
 
 export const BODY_REACTIONS: string[] = [...TENSE_BODY_REACTIONS, ...WARM_BODY_REACTIONS];

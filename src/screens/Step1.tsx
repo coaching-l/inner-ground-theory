@@ -47,9 +47,10 @@ function ChipGroups(props: {
 /** 刺激（出来事・解釈）と反応（感情・身体・思考・行動・願い）。quick のときは最小限の項目だけ出す */
 export function Step1Fields(props: { data: Step1Data; set: (patch: Partial<Step1Data>) => void; quick?: boolean }) {
   const { data, set, quick } = props;
+  // 問いの言葉は、選んだ種類（なければ感情から判断した種類）に合わせる
   const tone = toneOf(data);
-  // うれしかった出来事のときは、あたたかい・明るいほうを先に出す
-  const warmFirst = <T,>(tense: T, warm: T): T[] => (tone === 'positive' ? [warm, tense] : [tense, warm]);
+  // 並び順は、利用者が選んだ種類だけで決める（感情を選ぶたびにチップが動かないように）
+  const warmFirst = <T,>(tense: T, warm: T): T[] => (data.tone === 'positive' ? [warm, tense] : [tense, warm]);
   const emotionGroups = [
     ...warmFirst(
       { caption: STEP1_COPY.emotionGroups.tense, options: TENSE_EMOTIONS },
@@ -61,7 +62,7 @@ export function Step1Fields(props: { data: Step1Data; set: (patch: Partial<Step1
     { caption: STEP1_COPY.bodyGroups.tense, options: TENSE_BODY_REACTIONS },
     { caption: STEP1_COPY.bodyGroups.warm, options: WARM_BODY_REACTIONS },
   );
-  const rows = orderEmotions(data.emotions, tone);
+  const rows = orderEmotions(data.emotions, data.tone);
 
   return (
     <>
@@ -120,13 +121,13 @@ export function Step1Fields(props: { data: Step1Data; set: (patch: Partial<Step1
               set(
                 data.emotions.includes(e)
                   ? { emotions: toggle(data.emotions, e), intensities: setLevel(data.intensities, e, null) }
-                  : { emotions: orderEmotions(toggle(data.emotions, e), tone) },
+                  : { emotions: orderEmotions(toggle(data.emotions, e)) },
               )
             }
           />
           <AddChip
             placeholder="ほかの感情を書き足す"
-            onAdd={(e) => !data.emotions.includes(e) && set({ emotions: orderEmotions([...data.emotions, e], tone) })}
+            onAdd={(e) => !data.emotions.includes(e) && set({ emotions: orderEmotions([...data.emotions, e]) })}
           />
         </div>
 

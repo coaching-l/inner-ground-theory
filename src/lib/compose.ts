@@ -1,6 +1,6 @@
 // 回答から文章を組み立てる（つながりの一文・受容の一文・セッション準備シート）
 
-import { SHEET_COPY, STEP1_COPY, STEP3_COPY } from '../content/app';
+import { SHEET_COPY, STEP3_COPY } from '../content/app';
 import { DOMAIN_BY_ID } from '../content/domains';
 import { INTENSITY_LABELS } from '../content/reactions';
 import { SIGNS } from '../content/signs';
@@ -31,7 +31,7 @@ export function formatDate(iso: string): string {
 export function draftUnderstanding(entry: Entry): string {
   const { step1, step2, step3 } = entry;
   const tone = toneOf(step1);
-  const emotions = orderEmotions(step1.emotions, tone);
+  const emotions = orderEmotions(step1.emotions, step1.tone);
   const lines: string[] = [];
 
   const event = clean(step1.event);
@@ -54,7 +54,7 @@ export function draftUnderstanding(entry: Entry): string {
   if (parts.length) lines.push(`その背景には、${joinJa(parts)}が関わっていたのかもしれない。`);
 
   const protect = clean(step3.protect);
-  if (protect) lines.push(pick(SHEET_COPY.protectSentence, tone).replace('{x}', protect));
+  if (protect) lines.push(pick(SHEET_COPY.protectSentence, tone).replace('{x}', () => protect));
 
   return lines.join('\n');
 }
@@ -91,13 +91,12 @@ export function buildSessionSheet(entry: Entry): string {
   const out: string[] = ['【内的土壌 セッション準備シート】', `記入日：${formatDate(entry.createdAt)}`, ''];
 
   out.push('A．現在のテーマ', '');
-  const chosenTone = STEP1_COPY.toneOptions.find((o) => o.id === step1.tone);
-  if (chosenTone) out.push(`■ ${SHEET_COPY.toneLabel}：${chosenTone.label}`, '');
+  if (step1.tone) out.push(`■ ${SHEET_COPY.toneLabel}：${SHEET_COPY.toneValue[step1.tone]}`, '');
   out.push(...item('今回扱いたい出来事（事実）', step1.event));
   out.push(...item('どう受け取ったか（解釈）', step1.interpretation));
   const feel: string[] = [];
   if (step1.emotions.length) {
-    const emotions = orderEmotions(step1.emotions, tone);
+    const emotions = orderEmotions(step1.emotions, step1.tone);
     feel.push(`感情：${emotions.map((e) => withIntensity(e, levelOf(step1.intensities, e))).join('、')}`);
   }
   if (step1.body.length) feel.push(`身体：${step1.body.join('、')}`);

@@ -157,9 +157,11 @@ export function QuestionList(props: {
   );
 }
 
+/** defaultOpen は最初に表示したときだけ使う（あとから閉じたり開いたりはしない） */
 export function Disclosure(props: { summary: string; children: ReactNode; defaultOpen?: boolean }) {
+  const [initiallyOpen] = useState(props.defaultOpen);
   return (
-    <details className="disclosure" open={props.defaultOpen}>
+    <details className="disclosure" open={initiallyOpen}>
       <summary>{props.summary}</summary>
       <div className="disclosure-body">{props.children}</div>
     </details>

@@ -31,15 +31,18 @@ describe('splitQuestions', () => {
   it('うれしかった出来事では、その問いを先に出し、ほかの問いも残す', () => {
     expect(splitQuestions(sets, 'positive')).toEqual({ featured: ['p1', 'n2'], more: ['n1', 'e1'] });
   });
-  it('それ以外では、いつもの問いを先に出し、うれしかった出来事の問いは「ほかの問い」に回す', () => {
-    expect(splitQuestions(sets, 'negative')).toEqual({ featured: ['n1', 'n2'], more: ['e1', 'p1'] });
+  it('両方ある・未選択では、いつもの問いを先に出し、うれしかった出来事の問いは「ほかの問い」に回す', () => {
+    expect(splitQuestions(sets, 'mixed')).toEqual({ featured: ['n1', 'n2'], more: ['e1', 'p1'] });
     expect(splitQuestions(sets, null)).toEqual({ featured: ['n1', 'n2'], more: ['e1', 'p1'] });
+  });
+  it('引っかかった出来事では、うれしかった出来事を前提にした問いは出さない', () => {
+    expect(splitQuestions(sets, 'negative')).toEqual({ featured: ['n1', 'n2'], more: ['e1'] });
   });
 });
 
 describe('keepAnswered', () => {
-  it('種類を変える前に答えていた問いも残す', () => {
-    const variants = { negative: ['a', 'b'], positive: ['c'], neutral: ['a', 'c'] };
-    expect(keepAnswered(['c'], variants, { a: '答え', b: ' ' })).toEqual(['c', 'a']);
+  it('種類を変える前に答えていた問いも残す（書き直し中で答えが空でも消さない）', () => {
+    const variants = { negative: ['a', 'b', 'd'], positive: ['c'], neutral: ['a', 'c'] };
+    expect(keepAnswered(['c'], variants, { a: '答え', b: '' })).toEqual(['c', 'a', 'b']);
   });
 });

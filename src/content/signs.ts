@@ -42,7 +42,7 @@ export const SIGNS: Sign[] = [
   { id: 'w-recognized', group: 'warm', text: '認められた・わかってもらえたと感じた', weights: { needs: 2, relationships: 1 } },
   { id: 'w-new-view', group: 'warm', text: 'いつもの「〜すべき」から離れて、新しい見方ができた', weights: { beliefs: 2 } },
   { id: 'w-new-side', group: 'warm', text: '「自分にはこんな一面もある」と気づいた', weights: { selfConcept: 2 } },
-  { id: 'w-could', group: 'warm', text: '苦手だと思っていたことが、できた', weights: { inferiority: 2, selfConcept: 1 } },
+  { id: 'w-could', group: 'warm', text: '苦手だと思っていたことが、できた', weights: { selfConcept: 2, inferiority: 1 } },
   { id: 'w-felt', group: 'warm', text: 'うれしさや感謝を、素直に感じて表せた', weights: { emotions: 2 } },
   { id: 'w-chose', group: 'warm', text: '自分で選んで決めた、という実感があった', weights: { selfDetermination: 2 } },
   { id: 'w-moved', group: 'warm', text: '迷わず動けた・続けられた', weights: { behavior: 2 } },
@@ -107,33 +107,33 @@ export const KEYWORD_HINTS: KeywordHint[] = [
   // うれしかった・満たされた出来事の言葉
   {
     domain: 'selfDetermination',
-    pattern: /自分で(決め|選)/,
-    reason: '「自分で決めた・選んだ」という表現がありました',
+    pattern: /自分で(決め|選)(?!られな|べな|れな|ばな|ない)/,
+    reason: '「自分で決める」「自分で選ぶ」に関わる言葉がありました',
   },
   {
     domain: 'resources',
-    pattern: /強み|経験が(役|生き|活き)|活か(せ|し)|支えて|助けてもら/,
-    reason: '強みや経験、支えてくれた人・ものを表す言葉がありました',
+    pattern: /強み|経験が(役|生き|活き)|活か(せ(?!な|ず)|し)|支えて(?!ほし|もらえな)|助けてもら(?!えな|いたか)/,
+    reason: '強みや経験、支えてくれる人・ものに関わる言葉がありました',
   },
   {
     domain: 'selfConcept',
-    pattern: /自分にも(でき|こんな)|こんな一面|意外と(でき|自分)/,
+    pattern: /自分にも(でき(?!な)|こんな)|こんな一面|意外と(でき(?!な)|自分)/,
     reason: '自分の新しい一面に気づいたことを表す言葉がありました',
   },
   {
     domain: 'needs',
-    pattern: /(認め|わか|分か)ってもらえ|満たされ|報われ/,
-    reason: '満たされたこと・報われたことを表す言葉がありました',
+    pattern: /(認め|わか|分か)ってもらえ(?!な|ず)|満たされ(?!な|ず)|報われ(?!な|ず)/,
+    reason: '「認めてもらえる」「満たされる」「報われる」のような、ニーズに関わる言葉がありました',
   },
   {
     domain: 'relationships',
-    pattern: /つなが|ありがと|感謝/,
-    reason: '人とのつながりや感謝を表す言葉がありました',
+    pattern: /つながれ(?!な|ず)|つながっ(?!てい?な)|つながり(?!が?な)|ありがと|感謝/,
+    reason: '人とのつながりや感謝に関わる言葉がありました',
   },
   {
     domain: 'behavior',
-    pattern: /続けられ|動けた|やり(きっ|遂げ|とげ)|一歩/,
-    reason: '動けたこと・続けられたことを表す言葉がありました',
+    pattern: /続けられ(?!な|ず)|動けた|やり(きっ|遂げ|とげ)|一歩(?!も)/,
+    reason: '「動けた」「続けられる」「一歩」のような、行動に関わる言葉がありました',
   },
   {
     domain: 'values',

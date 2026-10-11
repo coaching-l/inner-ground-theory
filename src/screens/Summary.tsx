@@ -54,7 +54,7 @@ export function Summary({ entry, update, goStep, onExit, onDelete }: EntryScreen
                 <dd>
                   {step1.emotions.length > 0 && (
                     <span className="tags">
-                      {orderEmotions(step1.emotions, tone).map((e) => {
+                      {orderEmotions(step1.emotions, step1.tone).map((e) => {
                         const level = levelOf(step1.intensities, e);
                         return (
                           <span key={e} className="tag">
@@ -115,7 +115,7 @@ export function Summary({ entry, update, goStep, onExit, onDelete }: EntryScreen
 
         <Section className="no-print">
           <Field
-            label={pick(SUMMARY_COPY.nextSignLabel, tone)}
+            label={SUMMARY_COPY.nextSignLabel}
             hint={SUMMARY_COPY.nextSignHint}
             value={summary.nextSign}
             onChange={(nextSign) => set({ nextSign })}
@@ -125,7 +125,7 @@ export function Summary({ entry, update, goStep, onExit, onDelete }: EntryScreen
             label={SUMMARY_COPY.coachNoteLabel}
             value={summary.coachNote}
             onChange={(coachNote) => set({ coachNote })}
-            placeholder={SUMMARY_COPY.coachNotePlaceholder}
+            placeholder={pick(SUMMARY_COPY.coachNotePlaceholder, tone)}
           />
         </Section>
 

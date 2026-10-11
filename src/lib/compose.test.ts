@@ -103,27 +103,39 @@ describe('うれしかった・満たされた出来事', () => {
       intensities: { 感謝: 5 },
       wish: '人の役に立てている実感',
     };
-    e.step3 = { ...e.step3, protect: '人の役に立ちたいという思い', acceptMode: 'notyet' };
+    e.step3 = { ...e.step3, protect: '人の成長に関わること', acceptMode: 'notyet' };
     return e;
   }
 
-  it('つながりの一文は「満たされたこと」の言い方になり、感情はあたたかいものから並ぶ', () => {
+  it('つながりの一文は「大切にしていること」の言い方になり、感情はあたたかいものから並ぶ', () => {
     const draft = draftUnderstanding(warm());
     expect(draft).toContain('私は喜び、感謝、不安を感じた。');
-    expect(draft).toContain('あの気持ちは、人の役に立ちたいという思いが満たされたことを知らせていたのだと思う。');
+    expect(draft).toContain('あの気持ちは、私が人の成長に関わることを大切にしているという知らせだったのだと思う。');
+  });
+
+  it('書いた言葉に $ などの記号があっても、そのまま入れる', () => {
+    const e = warm();
+    e.step3.protect = '評価（$&）と$$';
+    expect(draftUnderstanding(e)).toContain('私が評価（$&）と$$を大切にしている');
   });
 
   it('まだ受け取れないときの一文も、うれしかった出来事に合わせる', () => {
-    expect(acceptanceSentence(warm())).toBe('まだ素直に受け取れない。そう感じている自分がいる。');
+    expect(acceptanceSentence(warm())).toBe('まだ受け取りきれない。そう感じている自分がいる。');
   });
 
   it('セッション準備シートに出来事の種類と、合う見出しを出す', () => {
     const sheet = buildSessionSheet(warm());
     expect(sheet).toContain('■ ふりかえった出来事：うれしかった・満たされた');
     expect(sheet).toContain('■ 何が満たされていたと感じるか\n人の役に立てている実感');
-    expect(sheet).toContain('■ 何が満たされたことを知らせていたか');
+    expect(sheet).toContain('■ 何を大切にしていると知らせていたか');
     expect(sheet).toContain('■ 受け取りたい現在の自分');
     expect(sheet).toContain('感情：喜び、感謝（とても強い）、不安');
+  });
+
+  it('両方あるときは、シートだけ見てもわかる言い方にする', () => {
+    const e = warm();
+    e.step1.tone = 'mixed';
+    expect(buildSessionSheet(e)).toContain('■ ふりかえった出来事：引っかかったことと、うれしかったことの両方がある');
   });
 
   it('種類を選んでいない記録は、シートに種類の行を出さない', () => {
