@@ -123,7 +123,6 @@ export function Summary({ entry, update, goStep, onExit, onDelete }: EntryScreen
           />
           <Field
             label={pick(SUMMARY_COPY.coachNoteLabel, tone)}
-            hint={pick(SUMMARY_COPY.coachNoteHint, tone) || undefined}
             value={summary.coachNote}
             onChange={(coachNote) => set({ coachNote })}
             placeholder={pick(SUMMARY_COPY.coachNotePlaceholder, tone)}
@@ -154,7 +153,11 @@ export function Summary({ entry, update, goStep, onExit, onDelete }: EntryScreen
 
         <Section className="no-print">
           <Notice tone={tone === 'positive' ? 'gold' : 'navy'} title={pick(SUMMARY_COPY.bridgeTitle, tone)}>
-            <p>{pick(SUMMARY_COPY.bridge, tone)}</p>
+            <p>
+              {tone === 'positive' && step3.acceptMode === 'notyet'
+                ? SUMMARY_COPY.bridgePositiveNotYet
+                : pick(SUMMARY_COPY.bridge, tone)}
+            </p>
           </Notice>
           <div className="actions">
             <button type="button" className="btn btn-outline" onClick={copySheet}>
