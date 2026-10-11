@@ -8,7 +8,19 @@ export type StepNo = 1 | 2 | 3 | 4;
 
 export type Feeling = 'clearer' | 'same' | 'heavy';
 
+/** ふりかえる出来事の種類。negative: 引っかかった・心が揺れた / positive: うれしかった・満たされた / mixed: 両方ある */
+export type Tone = 'negative' | 'positive' | 'mixed';
+
+/** 出来事の種類ごとの文言。両方ある・未選択のときは neutral（どちらにも合う文言）を使う */
+export interface Variants<T = string> {
+  negative: T;
+  positive: T;
+  neutral: T;
+}
+
 export interface Step1Data {
+  /** 利用者が選んだ出来事の種類。未選択なら、選んだ感情から判断する */
+  tone: Tone | null;
   event: string;
   interpretation: string;
   emotions: string[];

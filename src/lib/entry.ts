@@ -14,6 +14,7 @@ export function createEntry(status: EntryStatus = 'exploring', now = new Date())
     status,
     lastStep: 1,
     step1: {
+      tone: null,
       event: '',
       interpretation: '',
       emotions: [],

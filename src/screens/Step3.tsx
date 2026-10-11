@@ -3,6 +3,7 @@ import { STEP3_COPY } from '../content/app';
 import { BottomBar, Page, StepHeading, StepNav, TopBar } from '../components/layout';
 import { Field, Notice, QuestionList, Section, TextArea } from '../components/ui';
 import { understandingText } from '../lib/compose';
+import { keepAnswered, pick, toneOf } from '../lib/tone';
 import type { Step3Data } from '../lib/types';
 import type { EntryScreenProps } from './types';
 
@@ -12,22 +13,25 @@ export function Step3({ entry, update, goStep, onExit }: EntryScreenProps) {
   const setAnswer = (q: string, v: string) => set({ answers: { ...data.answers, [q]: v } });
   const sentenceId = useId();
   const acceptId = useId();
+  const tone = toneOf(entry.step1);
+  const understandQuestions = keepAnswered(pick(STEP3_COPY.understandQuestions, tone), STEP3_COPY.understandQuestions, data.answers);
+  const acceptQuestions = keepAnswered(pick(STEP3_COPY.acceptQuestions, tone), STEP3_COPY.acceptQuestions, data.answers);
 
   return (
     <>
       <TopBar onBack={onExit} backLabel="中断して保存" />
       <StepNav current={3} onJump={goStep} />
       <Page>
-        <StepHeading step={3} intro={STEP3_COPY.intro} />
+        <StepHeading step={3} intro={pick(STEP3_COPY.intro, tone)} />
 
         <Section title={STEP3_COPY.understandTitle}>
           <Field
-            label={STEP3_COPY.protectLabel}
+            label={pick(STEP3_COPY.protectLabel, tone)}
             value={data.protect}
             onChange={(protect) => set({ protect })}
-            placeholder={STEP3_COPY.protectPlaceholder}
+            placeholder={pick(STEP3_COPY.protectPlaceholder, tone)}
           />
-          <QuestionList questions={STEP3_COPY.understandQuestions} answers={data.answers} onChange={setAnswer} />
+          <QuestionList questions={understandQuestions} answers={data.answers} onChange={setAnswer} />
 
           <div className="field sentence-field">
             <label className="field-label" htmlFor={sentenceId}>
@@ -57,17 +61,17 @@ export function Step3({ entry, update, goStep, onExit }: EntryScreenProps) {
           </div>
         </Section>
 
-        <Section title={STEP3_COPY.acceptTitle}>
-          <p className="lead">{STEP3_COPY.acceptIntro}</p>
-          <QuestionList questions={STEP3_COPY.acceptQuestions} answers={data.answers} onChange={setAnswer} />
+        <Section title={pick(STEP3_COPY.acceptTitle, tone)}>
+          <p className="lead">{pick(STEP3_COPY.acceptIntro, tone)}</p>
+          <QuestionList questions={acceptQuestions} answers={data.answers} onChange={setAnswer} />
 
           <div className="field">
             <p className="field-label">{STEP3_COPY.acceptChoiceLabel}</p>
             <div className="segmented" role="radiogroup" aria-label={STEP3_COPY.acceptChoiceLabel}>
               {(
                 [
-                  ['accept', STEP3_COPY.acceptChoiceYes],
-                  ['notyet', STEP3_COPY.acceptChoiceNotYet],
+                  ['accept', pick(STEP3_COPY.acceptChoiceYes, tone)],
+                  ['notyet', pick(STEP3_COPY.acceptChoiceNotYet, tone)],
                 ] as const
               ).map(([mode, label]) => (
                 <button
@@ -91,7 +95,7 @@ export function Step3({ entry, update, goStep, onExit }: EntryScreenProps) {
                 id={acceptId}
                 value={data.acceptText}
                 onChange={(acceptText) => set({ acceptText })}
-                placeholder={STEP3_COPY.acceptPlaceholder}
+                placeholder={pick(STEP3_COPY.acceptPlaceholder, tone)}
               />
               <p>{STEP3_COPY.acceptSuffix}</p>
             </div>
@@ -99,8 +103,8 @@ export function Step3({ entry, update, goStep, onExit }: EntryScreenProps) {
 
           {data.acceptMode === 'notyet' && (
             <>
-              <Notice tone="gold" title={STEP3_COPY.notYetSentence}>
-                <p>{STEP3_COPY.notYetMessage}</p>
+              <Notice tone="gold" title={pick(STEP3_COPY.notYetSentence, tone)}>
+                <p>{pick(STEP3_COPY.notYetMessage, tone)}</p>
               </Notice>
               <Field
                 label={STEP3_COPY.notYetNoteLabel}

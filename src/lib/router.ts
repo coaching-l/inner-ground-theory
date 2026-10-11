@@ -8,7 +8,6 @@ export type Route =
   | { name: 'welcome' }
   | { name: 'history' }
   | { name: 'about' }
-  | { name: 'support' }
   | { name: 'quick'; id: string }
   | { name: 'entry'; id: string; step: StepNo };
 
@@ -21,8 +20,6 @@ export function parseHash(hash: string): Route {
       return { name: 'history' };
     case 'about':
       return { name: 'about' };
-    case 'support':
-      return { name: 'support' };
     case 'q':
       if (parts[1]) return { name: 'quick', id: parts[1] };
       break;

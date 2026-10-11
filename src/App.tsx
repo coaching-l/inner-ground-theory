@@ -7,7 +7,7 @@ import { navigate, useRoute } from './lib/router';
 import { clearEntries, hasWelcomed, isStorageAvailable, loadEntries, markWelcomed, saveEntries } from './lib/storage';
 import type { Entry, EntryStatus, StepNo } from './lib/types';
 import { History, Home } from './screens/Home';
-import { About, Support, Welcome } from './screens/Info';
+import { About, Welcome } from './screens/Info';
 import { Quick } from './screens/Quick';
 import { Step1 } from './screens/Step1';
 import { Step2 } from './screens/Step2';
@@ -149,13 +149,6 @@ export function App() {
             showToast('すべての記録を削除しました');
           }}
         />
-      </>
-    );
-  } else if (route.name === 'support') {
-    screen = (
-      <>
-        <TopBar onBack={home} backLabel="ホーム" />
-        <Support />
       </>
     );
   } else {

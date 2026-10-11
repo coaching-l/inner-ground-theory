@@ -7,7 +7,6 @@ describe('router', () => {
       { name: 'home' },
       { name: 'history' },
       { name: 'about' },
-      { name: 'support' },
       { name: 'welcome' },
       { name: 'quick', id: 'abc' },
       { name: 'entry', id: 'abc', step: 1 },
@@ -19,6 +18,8 @@ describe('router', () => {
   it('知らないURLはホームに戻す', () => {
     expect(parseHash('#/e/abc/9')).toEqual({ name: 'home' });
     expect(parseHash('#/unknown')).toEqual({ name: 'home' });
+    // 相談先のページは削除した。古いリンクで開いてもホームに戻る
+    expect(parseHash('#/support')).toEqual({ name: 'home' });
     expect(parseHash('')).toEqual({ name: 'home' });
   });
 });

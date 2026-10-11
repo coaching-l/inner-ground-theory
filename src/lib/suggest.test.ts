@@ -43,6 +43,17 @@ describe('suggestDomains', () => {
     expect(suggestDomains(step1({ emotions: ['怒り', '不安'], intensities: { 怒り: 3, 不安: 1 } }), [])).toEqual([]);
   });
 
+  it('うれしかった・満たされたときのサインからも候補を出す', () => {
+    const result = suggestDomains(step1(), ['w-chose']);
+    expect(result[0].domain).toBe('selfDetermination');
+  });
+
+  it('うれしかった出来事の言葉も手がかりにする', () => {
+    const ids = suggestDomains(step1({ thoughts: '自分で決めてよかった。これまでの経験が活きた' }), []).map((r) => r.domain);
+    expect(ids).toContain('selfDetermination');
+    expect(ids).toContain('resources');
+  });
+
   it('点数の高い順に最大3つまで返す', () => {
     const result = suggestDomains(step1({ thoughts: '仕方ない' }), ['carry', 'cant-ask', 'should', 'compare']);
     expect(result).toHaveLength(3);

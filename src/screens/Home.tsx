@@ -101,10 +101,6 @@ export function Home(props: { entries: Entry[]; onStart: () => void; onQuick: ()
           <span>このアプリについて</span>
           <span aria-hidden="true">›</span>
         </button>
-        <button type="button" onClick={() => navigate({ name: 'support' })}>
-          <span>つらいときの相談先</span>
-          <span aria-hidden="true">›</span>
-        </button>
       </nav>
 
       <footer className="home-footer">

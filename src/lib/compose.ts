@@ -1,10 +1,11 @@
 // 回答から文章を組み立てる（つながりの一文・受容の一文・セッション準備シート）
 
-import { STEP3_COPY } from '../content/app';
+import { SHEET_COPY, STEP1_COPY, STEP3_COPY } from '../content/app';
 import { DOMAIN_BY_ID } from '../content/domains';
 import { INTENSITY_LABELS } from '../content/reactions';
-import { levelOf } from './intensity';
 import { SIGNS } from '../content/signs';
+import { levelOf, orderEmotions } from './intensity';
+import { pick, toneOf } from './tone';
 import type { Entry } from './types';
 
 /** 前後の空白と、文末の句点・感嘆符を取り除く（「」の中に入れるため） */
@@ -29,19 +30,21 @@ export function formatDate(iso: string): string {
 
 export function draftUnderstanding(entry: Entry): string {
   const { step1, step2, step3 } = entry;
+  const tone = toneOf(step1);
+  const emotions = orderEmotions(step1.emotions, tone);
   const lines: string[] = [];
 
   const event = clean(step1.event);
-  if (event && step1.emotions.length) {
-    lines.push(`「${event}」という出来事で、私は${joinJa(step1.emotions)}を感じた。`);
+  if (event && emotions.length) {
+    lines.push(`「${event}」という出来事で、私は${joinJa(emotions)}を感じた。`);
   } else if (event) {
     lines.push(`「${event}」という出来事で、私の心が動いた。`);
-  } else if (step1.emotions.length) {
-    lines.push(`私は${joinJa(step1.emotions)}を感じた。`);
+  } else if (emotions.length) {
+    lines.push(`私は${joinJa(emotions)}を感じた。`);
   }
 
   const thoughts = clean(step1.thoughts);
-  if (thoughts) lines.push(`頭の中では「${thoughts}」という言葉が繰り返されていた。`);
+  if (thoughts) lines.push(`頭の中には「${thoughts}」という言葉が浮かんでいた。`);
 
   const parts = step2.domains.map((id) => {
     const insight = clean(step2.insights[id] ?? '');
@@ -51,7 +54,7 @@ export function draftUnderstanding(entry: Entry): string {
   if (parts.length) lines.push(`その背景には、${joinJa(parts)}が関わっていたのかもしれない。`);
 
   const protect = clean(step3.protect);
-  if (protect) lines.push(`あの反応は、${protect}を守ろうとしていたのだと思う。`);
+  if (protect) lines.push(pick(SHEET_COPY.protectSentence, tone).replace('{x}', protect));
 
   return lines.join('\n');
 }
@@ -63,7 +66,7 @@ export function understandingText(entry: Entry): string {
 
 export function acceptanceSentence(entry: Entry): string {
   const { step3 } = entry;
-  if (step3.acceptMode === 'notyet') return STEP3_COPY.notYetSentence;
+  if (step3.acceptMode === 'notyet') return pick(STEP3_COPY.notYetSentence, toneOf(entry.step1));
   if (step3.acceptMode === 'accept') {
     const body = clean(step3.acceptText);
     if (body) return `${STEP3_COPY.acceptPrefix}${body}${STEP3_COPY.acceptSuffix}`;
@@ -84,20 +87,24 @@ function item(label: string, value: string): string[] {
 /** ガイド第9章「セッション準備・振り返りシート」の形でテキストにする */
 export function buildSessionSheet(entry: Entry): string {
   const { step1, step2, step3, summary } = entry;
+  const tone = toneOf(step1);
   const out: string[] = ['【内的土壌 セッション準備シート】', `記入日：${formatDate(entry.createdAt)}`, ''];
 
   out.push('A．現在のテーマ', '');
+  const chosenTone = STEP1_COPY.toneOptions.find((o) => o.id === step1.tone);
+  if (chosenTone) out.push(`■ ${SHEET_COPY.toneLabel}：${chosenTone.label}`, '');
   out.push(...item('今回扱いたい出来事（事実）', step1.event));
   out.push(...item('どう受け取ったか（解釈）', step1.interpretation));
   const feel: string[] = [];
   if (step1.emotions.length) {
-    feel.push(`感情：${step1.emotions.map((e) => withIntensity(e, levelOf(step1.intensities, e))).join('、')}`);
+    const emotions = orderEmotions(step1.emotions, tone);
+    feel.push(`感情：${emotions.map((e) => withIntensity(e, levelOf(step1.intensities, e))).join('、')}`);
   }
   if (step1.body.length) feel.push(`身体：${step1.body.join('、')}`);
   out.push(...item('感じていること・身体の反応', feel.join('\n')));
-  out.push(...item('頭の中で繰り返している考え', step1.thoughts));
-  out.push(...item('とった行動・とりたかった行動', step1.action));
-  out.push(...item('本当はどうしたいと思っているか', step1.wish));
+  out.push(...item('頭の中に浮かんでいた言葉', step1.thoughts));
+  out.push(...item(pick(SHEET_COPY.action, tone), step1.action));
+  out.push(...item(pick(SHEET_COPY.wish, tone), step1.wish));
 
   out.push('B．関係していそうな自己知識の領域', '');
   const signs = SIGNS.filter((s) => step2.signs.includes(s.id)).map((s) => `・${s.text}`);
@@ -117,7 +124,7 @@ export function buildSessionSheet(entry: Entry): string {
   }
 
   out.push('C．理解と受容', '');
-  out.push(...item('何を守ろうとしていたか', step3.protect));
+  out.push(...item(pick(SHEET_COPY.protect, tone), step3.protect));
   for (const [q, a] of Object.entries(step3.answers)) {
     out.push(...item(q, a));
   }
@@ -125,7 +132,7 @@ export function buildSessionSheet(entry: Entry): string {
   const accept = [acceptanceSentence(entry), step3.acceptMode === 'notyet' ? step3.notYetNote : '']
     .filter((s) => s.trim())
     .join('\n');
-  out.push(...item('受け入れたい現在の自分', accept));
+  out.push(...item(pick(SHEET_COPY.accept, tone), accept));
   out.push(...item('次に気づきたいサイン', summary.nextSign));
   out.push(...item('セッションで話したいこと', summary.coachNote));
 

@@ -1,12 +1,39 @@
 import { useMemo, useState } from 'react';
 import { STEP2_COPY } from '../content/app';
 import { DOMAIN_BY_ID, DOMAIN_GROUPS, DOMAINS, MAX_DOMAINS, type DomainId } from '../content/domains';
-import { SIGNS } from '../content/signs';
+import { SIGNS, type Sign } from '../content/signs';
 import { BottomBar, Page, StepHeading, StepNav, TopBar } from '../components/layout';
 import { Disclosure, Field, Notice, QuestionList, Section } from '../components/ui';
 import { suggestDomains } from '../lib/suggest';
+import { pick, splitQuestions, toneOf } from '../lib/tone';
 import type { Step2Data } from '../lib/types';
 import type { EntryScreenProps } from './types';
+
+function SignList(props: { signs: Sign[]; checked: string[]; onToggle: (id: string) => void }) {
+  return (
+    <ul className="checklist">
+      {props.signs.map((s) => {
+        const on = props.checked.includes(s.id);
+        return (
+          <li key={s.id}>
+            <button
+              type="button"
+              role="checkbox"
+              aria-checked={on}
+              className={`check ${on ? 'is-on' : ''}`}
+              onClick={() => props.onToggle(s.id)}
+            >
+              <span className="check-box" aria-hidden="true">
+                {on ? '✓' : ''}
+              </span>
+              <span>{s.text}</span>
+            </button>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
 
 export function Step2({ entry, update, goStep, onExit }: EntryScreenProps) {
   const data = entry.step2;
@@ -14,6 +41,16 @@ export function Step2({ entry, update, goStep, onExit }: EntryScreenProps) {
   const [limitMsg, setLimitMsg] = useState(false);
 
   const suggestions = useMemo(() => suggestDomains(entry.step1, data.signs), [entry.step1, data.signs]);
+  const tone = toneOf(entry.step1);
+
+  // 出来事の種類に合うサインを先に出す。もう一方は「〜も見る」にたたむ（両方ある・未選択なら両方出す）
+  const signGroups = [
+    { key: 'tense', title: STEP2_COPY.signGroups.tense, signs: SIGNS.filter((s) => s.group === 'tense') },
+    { key: 'warm', title: STEP2_COPY.signGroups.warm, signs: SIGNS.filter((s) => s.group === 'warm') },
+  ];
+  if (tone === 'positive') signGroups.reverse();
+  const folded = tone === 'negative' || tone === 'positive' ? signGroups[1] : null;
+  const shown = folded ? [signGroups[0]] : signGroups;
 
   const toggleSign = (id: string) =>
     set({ signs: data.signs.includes(id) ? data.signs.filter((s) => s !== id) : [...data.signs, id] });
@@ -47,27 +84,20 @@ export function Step2({ entry, update, goStep, onExit }: EntryScreenProps) {
         <StepHeading step={2} intro={STEP2_COPY.intro} />
 
         <Section title={STEP2_COPY.signsLabel} hint={STEP2_COPY.signsHint}>
-          <ul className="checklist">
-            {SIGNS.map((s) => {
-              const on = data.signs.includes(s.id);
-              return (
-                <li key={s.id}>
-                  <button
-                    type="button"
-                    role="checkbox"
-                    aria-checked={on}
-                    className={`check ${on ? 'is-on' : ''}`}
-                    onClick={() => toggleSign(s.id)}
-                  >
-                    <span className="check-box" aria-hidden="true">
-                      {on ? '✓' : ''}
-                    </span>
-                    <span>{s.text}</span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
+          {shown.map((g) => (
+            <div key={g.key} className="sign-group">
+              <p className="chip-caption">{g.title}</p>
+              <SignList signs={g.signs} checked={data.signs} onToggle={toggleSign} />
+            </div>
+          ))}
+          {folded && (
+            <Disclosure
+              summary={`${folded.title}も見る`}
+              defaultOpen={folded.signs.some((s) => data.signs.includes(s.id))}
+            >
+              <SignList signs={folded.signs} checked={data.signs} onToggle={toggleSign} />
+            </Disclosure>
+          )}
         </Section>
 
         <Section title={STEP2_COPY.candidatesLabel}>
@@ -157,6 +187,10 @@ export function Step2({ entry, update, goStep, onExit }: EntryScreenProps) {
             {data.domains.map((id) => {
               const d = DOMAIN_BY_ID[id];
               const answers = data.answers[id] ?? {};
+              const { featured, more } = splitQuestions(
+                { negative: d.featured, positive: d.positive, extra: d.more },
+                tone,
+              );
               return (
                 <article key={id} className="domain-card">
                   <header className="domain-card-head">
@@ -172,17 +206,17 @@ export function Step2({ entry, update, goStep, onExit }: EntryScreenProps) {
                       <p key={p}>{p}</p>
                     ))}
                   </Disclosure>
-                  <QuestionList questions={d.featured} answers={answers} onChange={(q, v) => setAnswer(id, q, v)} />
-                  {d.more.length > 0 && (
-                    <Disclosure summary="ほかの問い" defaultOpen={d.more.some((q) => answers[q]?.trim())}>
-                      <QuestionList questions={d.more} answers={answers} onChange={(q, v) => setAnswer(id, q, v)} />
+                  <QuestionList questions={featured} answers={answers} onChange={(q, v) => setAnswer(id, q, v)} />
+                  {more.length > 0 && (
+                    <Disclosure summary="ほかの問い" defaultOpen={more.some((q) => answers[q]?.trim())}>
+                      <QuestionList questions={more} answers={answers} onChange={(q, v) => setAnswer(id, q, v)} />
                     </Disclosure>
                   )}
                   <Field
                     label={STEP2_COPY.insightLabel}
                     value={data.insights[id] ?? ''}
                     onChange={(v) => setInsight(id, v)}
-                    placeholder={STEP2_COPY.insightPlaceholder}
+                    placeholder={pick(STEP2_COPY.insightPlaceholder, tone)}
                   />
                 </article>
               );
