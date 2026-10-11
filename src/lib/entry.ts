@@ -1,3 +1,4 @@
+import { RENAMED_QUESTIONS } from '../content/app';
 import type { Entry, EntryStatus, Step1Data } from './types';
 
 function newId(): string {
@@ -48,6 +49,17 @@ function normalizeStep1(raw: (Partial<Step1Data> & { intensity?: number | null }
   return step1;
 }
 
+/** 言い回しを変えた問いへの答えを、今の言い回しの問いに付け替える（今の問いに答えがあればそちらを残す） */
+function renameAnswers(answers: Record<string, string> | undefined): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const [q, a] of Object.entries(answers ?? {})) {
+    const to = Object.hasOwn(RENAMED_QUESTIONS, q) ? RENAMED_QUESTIONS[q] : q;
+    if (to !== q && Object.hasOwn(answers ?? {}, to)) continue;
+    out[to] = a;
+  }
+  return out;
+}
+
 /** 保存データが古い形でも壊れないよう、足りない項目を補う */
 export function normalizeEntry(raw: Partial<Entry> & { id: string }): Entry {
   const base = createEntry(raw.status ?? 'exploring', new Date(raw.createdAt ?? Date.now()));
@@ -56,7 +68,7 @@ export function normalizeEntry(raw: Partial<Entry> & { id: string }): Entry {
     ...raw,
     step1: normalizeStep1(raw.step1, base.step1),
     step2: { ...base.step2, ...raw.step2 },
-    step3: { ...base.step3, ...raw.step3 },
+    step3: { ...base.step3, ...raw.step3, answers: renameAnswers(raw.step3?.answers) },
     summary: { ...base.summary, ...raw.summary },
   };
 }
