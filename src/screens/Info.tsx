@@ -1,6 +1,5 @@
 import { APP_TAGLINE, BRAND, DISCLAIMER, KEY_MESSAGE } from '../content/app';
 import { BrandHeader, Page } from '../components/layout';
-import { SupportList } from '../components/SupportBox';
 import { Notice, Section } from '../components/ui';
 
 const SIX_STEPS: { no: number; title: string; process: string; where: 'app' | 'session' }[] = [
@@ -38,7 +37,7 @@ export function Welcome(props: { onStart: () => void }) {
       </Notice>
       <Section title="このアプリでできること">
         <p>
-          日常の出来事（刺激）と、そのときの自分の反応を手がかりに、内的土壌成長モデルのSTEP1〜3をひとりで進めるためのノートです。
+          日常の出来事（刺激）と、そのときの自分の反応を手がかりに、内的土壌成長モデルのSTEP1〜3をひとりで進めるためのノートです。引っかかった出来事も、うれしかった出来事も、同じ流れでふりかえれます。
         </p>
         <StepMap />
       </Section>
@@ -80,6 +79,7 @@ export function About(props: { onClearAll: () => void }) {
         <ul className="bullets">
           <li>タイプやスコアで自分を分類しません。10領域は診断ではなく、対話と内省を深めるための地図です。</li>
           <li>一度に扱う領域は1〜2つまで。すべてを埋める必要はありません。</li>
+          <li>うまくいったこと・うれしかったことも、自己理解の大切な材料として同じように扱います。</li>
           <li>過去の原因探しや、無理に前向きに捉えることを目的にしません。</li>
           <li>受容は現状維持ではなく、現実を否定せず、そこから次の選択を始めることです。</li>
         </ul>
@@ -117,20 +117,6 @@ export function About(props: { onClearAll: () => void }) {
         出典：{BRAND}「内的土壌理論・内的土壌成長モデル 統合実践ガイド」Ver1.1
         <br />© {BRAND}
       </p>
-    </Page>
-  );
-}
-
-export function Support() {
-  return (
-    <Page>
-      <div className="step-heading">
-        <h1 className="step-title">つらいときの相談先</h1>
-        <p className="lead">
-          自分と向き合う中で、しんどさを感じることもあります。ひとりで抱えなくて大丈夫です。担当のコーチに伝えるか、こちらの窓口に相談してください。
-        </p>
-      </div>
-      <SupportList />
     </Page>
   );
 }

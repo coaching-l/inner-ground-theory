@@ -2,6 +2,7 @@ import { APP_TAGLINE, BRAND, KEY_MESSAGE } from '../content/app';
 import { DOMAIN_BY_ID } from '../content/domains';
 import { BrandHeader, Page } from '../components/layout';
 import { formatDate } from '../lib/compose';
+import { orderEmotions } from '../lib/intensity';
 import { navigate } from '../lib/router';
 import type { Entry } from '../lib/types';
 
@@ -34,7 +35,7 @@ export function EntryItem(props: { entry: Entry; onDelete?: () => void }) {
                 {DOMAIN_BY_ID[id].name}
               </span>
             ))}
-            {entry.step1.emotions.slice(0, 3).map((e) => (
+            {orderEmotions(entry.step1.emotions, entry.step1.tone).slice(0, 3).map((e) => (
               <span key={e} className="tag">
                 {e}
               </span>
@@ -99,10 +100,6 @@ export function Home(props: { entries: Entry[]; onStart: () => void; onQuick: ()
         </button>
         <button type="button" onClick={() => navigate({ name: 'about' })}>
           <span>このアプリについて</span>
-          <span aria-hidden="true">›</span>
-        </button>
-        <button type="button" onClick={() => navigate({ name: 'support' })}>
-          <span>つらいときの相談先</span>
           <span aria-hidden="true">›</span>
         </button>
       </nav>

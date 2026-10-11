@@ -43,6 +43,25 @@ describe('suggestDomains', () => {
     expect(suggestDomains(step1({ emotions: ['怒り', '不安'], intensities: { 怒り: 3, 不安: 1 } }), [])).toEqual([]);
   });
 
+  it('うれしかった・満たされたときのサインからも候補を出す', () => {
+    const result = suggestDomains(step1(), ['w-chose']);
+    expect(result[0].domain).toBe('selfDetermination');
+  });
+
+  it('うれしかった出来事の言葉も手がかりにする', () => {
+    const ids = suggestDomains(step1({ thoughts: '自分で決めてよかった。これまでの経験が活きた' }), []).map((r) => r.domain);
+    expect(ids).toContain('selfDetermination');
+    expect(ids).toContain('resources');
+  });
+
+  it('打ち消しの言い方（〜なかった・〜ない）は、うれしかった出来事の手がかりにしない', () => {
+    const domains = (thoughts: string) => suggestDomains(step1({ thoughts }), []).map((r) => r.domain);
+    expect(domains('わかってもらえなかった。どうせ報われない')).not.toContain('needs');
+    expect(domains('自分で決められなかった')).not.toContain('selfDetermination');
+    expect(domains('いつも続けられない。一歩も踏み出せなかった')).not.toContain('behavior');
+    expect(domains('もっと支えてほしかった')).not.toContain('resources');
+  });
+
   it('点数の高い順に最大3つまで返す', () => {
     const result = suggestDomains(step1({ thoughts: '仕方ない' }), ['carry', 'cant-ask', 'should', 'compare']);
     expect(result).toHaveLength(3);

@@ -39,8 +39,8 @@ describe('draftUnderstanding', () => {
   it('回答から「つながりの一文」を組み立てる', () => {
     expect(draftUnderstanding(sample())).toBe(
       [
-        '「会議で企画に「詰めが甘い」と言われた」という出来事で、私は悔しさと不安を感じた。',
-        '頭の中では「やっぱり自分は詰めが甘い」という言葉が繰り返されていた。',
+        '「会議で企画に「詰めが甘い」と言われた」という出来事で、私は不安と悔しさを感じた。',
+        '頭の中には「やっぱり自分は詰めが甘い」という言葉が浮かんでいた。',
         'その背景には、ビリーフ（「最初から完璧でなければ」という前提があった）と自己概念が関わっていたのかもしれない。',
         'あの反応は、チームからの信頼を守ろうとしていたのだと思う。',
       ].join('\n'),
@@ -83,11 +83,62 @@ describe('buildSessionSheet', () => {
     expect(a).toBeGreaterThan(0);
     expect(b).toBeGreaterThan(a);
     expect(c).toBeGreaterThan(b);
-    expect(sheet).toContain('感情：悔しさ（強い）、不安（少し）');
+    expect(sheet).toContain('感情：不安（少し）、悔しさ（強い）');
     expect(sheet).toContain('■ 今回、特に深めたい領域：ビリーフ、自己概念');
     expect(sheet).toContain('A．企画は最初から完璧であるべき');
     expect(sheet).toContain('今の私には、期待に応えようとして、自分を追い込みやすいという側面がある。');
     expect(sheet).not.toContain('本当はどうしたいと思っているか');
     expect(sheet).not.toMatch(/\n{3,}/);
+  });
+});
+
+describe('うれしかった・満たされた出来事', () => {
+  function warm(): Entry {
+    const e = createEntry('exploring', new Date('2026-10-11T10:00:00+09:00'));
+    e.step1 = {
+      ...e.step1,
+      tone: 'positive',
+      event: '後輩から「相談してよかったです」と言われた',
+      emotions: ['不安', '感謝', '喜び'],
+      intensities: { 感謝: 5 },
+      wish: '人の役に立てている実感',
+    };
+    e.step3 = { ...e.step3, protect: '人の成長に関わること', acceptMode: 'notyet' };
+    return e;
+  }
+
+  it('つながりの一文は「大切にしていること」の言い方になり、感情はあたたかいものから並ぶ', () => {
+    const draft = draftUnderstanding(warm());
+    expect(draft).toContain('私は喜び、感謝、不安を感じた。');
+    expect(draft).toContain('あの気持ちは、私が人の成長に関わることを大切にしているという知らせだったのだと思う。');
+  });
+
+  it('書いた言葉に $ などの記号があっても、そのまま入れる', () => {
+    const e = warm();
+    e.step3.protect = '評価（$&）と$$';
+    expect(draftUnderstanding(e)).toContain('私が評価（$&）と$$を大切にしている');
+  });
+
+  it('まだ受け取れないときの一文も、うれしかった出来事に合わせる', () => {
+    expect(acceptanceSentence(warm())).toBe('まだ受け取りきれない。そう感じている自分がいる。');
+  });
+
+  it('セッション準備シートに出来事の種類と、合う見出しを出す', () => {
+    const sheet = buildSessionSheet(warm());
+    expect(sheet).toContain('■ ふりかえった出来事：うれしかった・満たされた');
+    expect(sheet).toContain('■ 何が満たされていたと感じるか\n人の役に立てている実感');
+    expect(sheet).toContain('■ 何を大切にしていると知らせていたか');
+    expect(sheet).toContain('■ 受け取りたい現在の自分');
+    expect(sheet).toContain('感情：喜び、感謝（とても強い）、不安');
+  });
+
+  it('両方あるときは、シートだけ見てもわかる言い方にする', () => {
+    const e = warm();
+    e.step1.tone = 'mixed';
+    expect(buildSessionSheet(e)).toContain('■ ふりかえった出来事：引っかかったことと、うれしかったことの両方がある');
+  });
+
+  it('種類を選んでいない記録は、シートに種類の行を出さない', () => {
+    expect(buildSessionSheet(sample())).not.toContain('ふりかえった出来事');
   });
 });

@@ -2,19 +2,20 @@ import { APP_NAME, SUMMARY_COPY } from '../content/app';
 import { DOMAIN_BY_ID } from '../content/domains';
 import { INTENSITY_LABELS } from '../content/reactions';
 import { BottomBar, Page, StepNav, TopBar } from '../components/layout';
-import { SupportList } from '../components/SupportBox';
 import { showToast } from '../components/Toast';
 import { Field, Notice, Section } from '../components/ui';
 import { copyText, canShare, shareText } from '../lib/clipboard';
-import { levelOf } from '../lib/intensity';
+import { levelOf, orderEmotions } from '../lib/intensity';
 import { navigate } from '../lib/router';
 import { acceptanceSentence, buildSessionSheet, formatDate, understandingText } from '../lib/compose';
+import { pick, toneOf } from '../lib/tone';
 import type { Feeling, SummaryData } from '../lib/types';
 import type { EntryScreenProps } from './types';
 
 export function Summary({ entry, update, goStep, onExit, onDelete }: EntryScreenProps & { onDelete: () => void }) {
   const { step1, step2, step3, summary } = entry;
   const set = (patch: Partial<SummaryData>) => update((e) => ({ ...e, summary: { ...e.summary, ...patch } }));
+  const tone = toneOf(step1);
   const understanding = understandingText(entry);
   const acceptance = acceptanceSentence(entry);
 
@@ -53,7 +54,7 @@ export function Summary({ entry, update, goStep, onExit, onDelete }: EntryScreen
                 <dd>
                   {step1.emotions.length > 0 && (
                     <span className="tags">
-                      {step1.emotions.map((e) => {
+                      {orderEmotions(step1.emotions, step1.tone).map((e) => {
                         const level = levelOf(step1.intensities, e);
                         return (
                           <span key={e} className="tag">
@@ -118,13 +119,13 @@ export function Summary({ entry, update, goStep, onExit, onDelete }: EntryScreen
             hint={SUMMARY_COPY.nextSignHint}
             value={summary.nextSign}
             onChange={(nextSign) => set({ nextSign })}
-            placeholder={SUMMARY_COPY.nextSignPlaceholder}
+            placeholder={pick(SUMMARY_COPY.nextSignPlaceholder, tone)}
           />
           <Field
             label={SUMMARY_COPY.coachNoteLabel}
             value={summary.coachNote}
             onChange={(coachNote) => set({ coachNote })}
-            placeholder={SUMMARY_COPY.coachNotePlaceholder}
+            placeholder={pick(SUMMARY_COPY.coachNotePlaceholder, tone)}
           />
         </Section>
 
@@ -146,8 +147,6 @@ export function Summary({ entry, update, goStep, onExit, onDelete }: EntryScreen
           {summary.feeling === 'heavy' && (
             <Notice tone="gold">
               <p>{SUMMARY_COPY.heavyMessage}</p>
-              <p className="small">つらさが強いときは、こちらにも相談できます。</p>
-              <SupportList />
             </Notice>
           )}
         </Section>

@@ -364,6 +364,24 @@ a {
   color: var(--on-navy);
 }
 
+/* 見出しつきのチップ（「ざわつく・重い」「あたたかい・明るい」など） */
+.chip-groups {
+  display: grid;
+  gap: 12px;
+}
+
+.chip-caption {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+}
+
+.sign-group + .sign-group {
+  margin-top: 16px;
+}
+
 .add-chip {
   display: flex;
   gap: 8px;
@@ -514,6 +532,15 @@ a {
   font-size: 14px;
   padding: 10px 4px;
   letter-spacing: 0;
+}
+
+.segmented-stack {
+  grid-template-columns: 1fr;
+}
+
+.segmented-stack button {
+  text-align: left;
+  padding: 10px 14px;
 }
 
 .segmented button.is-on {
@@ -1386,39 +1413,6 @@ a {
   .stepmap-session .stepmap-no {
     color: var(--muted);
   }
-}
-
-/* ===== 相談窓口 ===== */
-.support-list {
-  list-style: none;
-  margin: 12px 0;
-  padding: 0;
-  display: grid;
-  gap: 10px;
-}
-
-.support-list li {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 10px 14px;
-}
-
-.support-name {
-  font-weight: 700;
-  font-size: 14px;
-}
-
-.support-tel {
-  font-size: 20px;
-  font-weight: 700;
-  text-decoration: none;
-  letter-spacing: 0.04em;
-}
-
-.support-hours {
-  font-size: 13px;
-  color: var(--muted);
 }
 
 /* ===== トースト ===== */
