@@ -530,6 +530,11 @@ a {
   line-height: 1.4;
 }
 
+/* 語の途中で折り返さないためのまとまり */
+.segmented .phrase {
+  display: inline-block;
+}
+
 .segmented-3 button {
   font-size: 14px;
   padding: 10px 4px;

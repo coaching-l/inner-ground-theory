@@ -84,10 +84,16 @@ export function Step3({ entry, update, goStep, onExit }: EntryScreenProps) {
                   type="button"
                   role="radio"
                   aria-checked={data.acceptMode === mode}
+                  aria-label={label}
                   className={data.acceptMode === mode ? 'is-on' : ''}
                   onClick={() => set({ acceptMode: data.acceptMode === mode ? null : mode })}
                 >
-                  {label}
+                  {/* 狭い画面で「まだ受け入れられ／ない」と切れないよう、「まだ」のあとでだけ折り返す */}
+                  {(label.startsWith('まだ') ? ['まだ', label.slice(2)] : [label]).map((part) => (
+                    <span key={part} className="phrase">
+                      {part}
+                    </span>
+                  ))}
                 </button>
               ))}
             </div>
