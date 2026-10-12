@@ -66,7 +66,7 @@ export function understandingText(entry: Entry): string {
 
 export function acceptanceSentence(entry: Entry): string {
   const { step3 } = entry;
-  if (step3.acceptMode === 'notyet') return pick(STEP3_COPY.notYetSentence, toneOf(entry.step1));
+  if (step3.acceptMode === 'notyet') return STEP3_COPY.notYetSentence;
   if (step3.acceptMode === 'accept') {
     const body = clean(step3.acceptText);
     if (body) return `${STEP3_COPY.acceptPrefix}${body}${STEP3_COPY.acceptSuffix}`;

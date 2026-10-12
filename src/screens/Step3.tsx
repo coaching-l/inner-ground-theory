@@ -67,11 +67,16 @@ export function Step3({ entry, update, goStep, onExit }: EntryScreenProps) {
 
           <div className="field">
             <p className="field-label">{STEP3_COPY.acceptChoiceLabel}</p>
-            <div className="segmented" role="radiogroup" aria-label={STEP3_COPY.acceptChoiceLabel}>
+            {/* 両方あるときは「受け止めてみる・受け取ってみる」が長いので、縦に並べる */}
+            <div
+              className={tone === 'negative' || tone === 'positive' ? 'segmented' : 'segmented segmented-stack'}
+              role="radiogroup"
+              aria-label={STEP3_COPY.acceptChoiceLabel}
+            >
               {(
                 [
                   ['accept', pick(STEP3_COPY.acceptChoiceYes, tone)],
-                  ['notyet', pick(STEP3_COPY.acceptChoiceNotYet, tone)],
+                  ['notyet', STEP3_COPY.acceptChoiceNotYet],
                 ] as const
               ).map(([mode, label]) => (
                 <button
@@ -106,8 +111,8 @@ export function Step3({ entry, update, goStep, onExit }: EntryScreenProps) {
 
           {data.acceptMode === 'notyet' && (
             <>
-              <Notice tone="gold" title={pick(STEP3_COPY.notYetSentence, tone)}>
-                <p>{pick(STEP3_COPY.notYetMessage, tone)}</p>
+              <Notice tone="gold" title={STEP3_COPY.notYetSentence}>
+                <p>{STEP3_COPY.notYetMessage}</p>
               </Notice>
               <Field
                 label={STEP3_COPY.notYetNoteLabel}
