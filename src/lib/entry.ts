@@ -1,5 +1,5 @@
 import { RENAMED_QUESTIONS } from '../content/app';
-import type { Entry, EntryStatus, Step1Data } from './types';
+import type { Entry, EntryStatus, Step1Data, Step2Data } from './types';
 
 function newId(): string {
   if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) return crypto.randomUUID();
@@ -60,6 +60,10 @@ function renameAnswers(answers: Record<string, string> | undefined): Record<stri
   return out;
 }
 
+function renameDomainAnswers(answers: Step2Data['answers'] | undefined): Step2Data['answers'] {
+  return Object.fromEntries(Object.entries(answers ?? {}).map(([domain, a]) => [domain, renameAnswers(a)]));
+}
+
 /** 保存データが古い形でも壊れないよう、足りない項目を補う */
 export function normalizeEntry(raw: Partial<Entry> & { id: string }): Entry {
   const base = createEntry(raw.status ?? 'exploring', new Date(raw.createdAt ?? Date.now()));
@@ -67,7 +71,7 @@ export function normalizeEntry(raw: Partial<Entry> & { id: string }): Entry {
     ...base,
     ...raw,
     step1: normalizeStep1(raw.step1, base.step1),
-    step2: { ...base.step2, ...raw.step2 },
+    step2: { ...base.step2, ...raw.step2, answers: renameDomainAnswers(raw.step2?.answers) },
     step3: { ...base.step3, ...raw.step3, answers: renameAnswers(raw.step3?.answers) },
     summary: { ...base.summary, ...raw.summary },
   };

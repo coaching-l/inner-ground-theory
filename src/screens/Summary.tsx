@@ -1,4 +1,5 @@
-import { APP_NAME, SHEET_COPY, SUMMARY_COPY } from '../content/app';
+import { useState } from 'react';
+import { APP_NAME, SHEET_COPY, STEP1_COPY, SUMMARY_COPY } from '../content/app';
 import { DOMAIN_BY_ID } from '../content/domains';
 import { INTENSITY_LABELS } from '../content/reactions';
 import { BottomBar, Page, StepNav, TopBar } from '../components/layout';
@@ -8,14 +9,20 @@ import { copyText, canShare, shareText } from '../lib/clipboard';
 import { levelOf, orderEmotions } from '../lib/intensity';
 import { navigate } from '../lib/router';
 import { acceptanceSentence, buildSessionSheet, formatDate, understandingText } from '../lib/compose';
-import { pick, toneOf } from '../lib/tone';
-import type { Feeling, SummaryData } from '../lib/types';
+import { guidanceToneOf, pick, toneOf } from '../lib/tone';
+import type { Feeling, SummaryData, Tone } from '../lib/types';
 import type { EntryScreenProps } from './types';
 
 export function Summary({ entry, update, goStep, onExit, onDelete }: EntryScreenProps & { onDelete: () => void }) {
   const { step1, step2, step3, summary } = entry;
   const set = (patch: Partial<SummaryData>) => update((e) => ({ ...e, summary: { ...e.summary, ...patch } }));
+  const setTone = (t: Tone | null) => update((e) => ({ ...e, step1: { ...e.step1, tone: t } }));
+  // 問いの言い回し（STEP3と同じ）は感情からの判断も使う。この先の案内は本人が選んだ種類で決める
   const tone = toneOf(step1);
+  const guidance = guidanceToneOf(step1);
+  // 種類を選ばないまま来たときだけ尋ねる（選んだあとも、この画面にいるあいだは選び直せるよう残す）
+  const [askTone] = useState(() => step1.tone === null);
+  const heavyPositive = guidance === 'positive' && summary.feeling === 'heavy';
   const understanding = understandingText(entry);
   const acceptance = acceptanceSentence(entry);
 
@@ -32,7 +39,7 @@ export function Summary({ entry, update, goStep, onExit, onDelete }: EntryScreen
         <div className="step-heading no-print">
           <p className="eyebrow">まとめ</p>
           <h1 className="step-title">今回の内省カード</h1>
-          <p className="lead">{pick(SUMMARY_COPY.lead, tone)}</p>
+          <p className="lead">{pick(SUMMARY_COPY.lead, guidance)}</p>
         </div>
 
         <article className="card print-area">
@@ -98,7 +105,7 @@ export function Summary({ entry, update, goStep, onExit, onDelete }: EntryScreen
           )}
           {acceptance && (
             <div className="card-quote card-quote-gold">
-              <p className="card-quote-label">受容</p>
+              <p className="card-quote-label">{pick(SUMMARY_COPY.acceptCardLabel, tone)}</p>
               <p>{acceptance}</p>
               {step3.acceptMode === 'notyet' && step3.notYetNote.trim() && (
                 <p className="card-sub prewrap">{step3.notYetNote}</p>
@@ -107,25 +114,44 @@ export function Summary({ entry, update, goStep, onExit, onDelete }: EntryScreen
           )}
           {summary.nextSign.trim() && (
             <div className="card-next">
-              <p className="card-quote-label">{pick(SHEET_COPY.nextSign, tone)}</p>
+              <p className="card-quote-label">{pick(SHEET_COPY.nextSign, guidance)}</p>
               <p className="prewrap">{summary.nextSign}</p>
             </div>
           )}
         </article>
 
+        {askTone && (
+          <Section title={SUMMARY_COPY.toneAskLabel} hint={SUMMARY_COPY.toneAskHint} className="no-print">
+            <div className="segmented segmented-stack" role="radiogroup" aria-label={SUMMARY_COPY.toneAskLabel}>
+              {STEP1_COPY.toneOptions.map((o) => (
+                <button
+                  key={o.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={step1.tone === o.id}
+                  className={step1.tone === o.id ? 'is-on' : ''}
+                  onClick={() => setTone(step1.tone === o.id ? null : (o.id as Tone))}
+                >
+                  {o.label}
+                </button>
+              ))}
+            </div>
+          </Section>
+        )}
+
         <Section className="no-print">
           <Field
-            label={pick(SUMMARY_COPY.nextSignLabel, tone)}
-            hint={pick(SUMMARY_COPY.nextSignHint, tone)}
+            label={pick(SUMMARY_COPY.nextSignLabel, guidance)}
+            hint={pick(SUMMARY_COPY.nextSignHint, guidance)}
             value={summary.nextSign}
             onChange={(nextSign) => set({ nextSign })}
-            placeholder={pick(SUMMARY_COPY.nextSignPlaceholder, tone)}
+            placeholder={pick(SUMMARY_COPY.nextSignPlaceholder, guidance)}
           />
           <Field
-            label={pick(SUMMARY_COPY.coachNoteLabel, tone)}
+            label={pick(SUMMARY_COPY.coachNoteLabel, guidance)}
             value={summary.coachNote}
             onChange={(coachNote) => set({ coachNote })}
-            placeholder={pick(SUMMARY_COPY.coachNotePlaceholder, tone)}
+            placeholder={pick(SUMMARY_COPY.coachNotePlaceholder, guidance)}
           />
         </Section>
 
@@ -152,11 +178,16 @@ export function Summary({ entry, update, goStep, onExit, onDelete }: EntryScreen
         </Section>
 
         <Section className="no-print">
-          <Notice tone={tone === 'positive' ? 'gold' : 'navy'} title={pick(SUMMARY_COPY.bridgeTitle, tone)}>
+          <Notice
+            tone={guidance === 'positive' && !heavyPositive ? 'gold' : 'navy'}
+            title={heavyPositive ? SUMMARY_COPY.bridgePositiveHeavyTitle : pick(SUMMARY_COPY.bridgeTitle, guidance)}
+          >
             <p>
-              {tone === 'positive' && step3.acceptMode === 'notyet'
-                ? SUMMARY_COPY.bridgePositiveNotYet
-                : pick(SUMMARY_COPY.bridge, tone)}
+              {heavyPositive
+                ? SUMMARY_COPY.bridgePositiveHeavy
+                : guidance === 'positive' && step3.acceptMode === 'notyet'
+                  ? SUMMARY_COPY.bridgePositiveNotYet
+                  : pick(SUMMARY_COPY.bridge, guidance)}
             </p>
           </Notice>
           <div className="actions">

@@ -5,7 +5,7 @@ import { DOMAIN_BY_ID } from '../content/domains';
 import { INTENSITY_LABELS } from '../content/reactions';
 import { SIGNS } from '../content/signs';
 import { levelOf, orderEmotions } from './intensity';
-import { pick, toneOf } from './tone';
+import { guidanceToneOf, pick, toneOf } from './tone';
 import type { Entry } from './types';
 
 /** 前後の空白と、文末の句点・感嘆符を取り除く（「」の中に入れるため） */
@@ -88,6 +88,8 @@ function item(label: string, value: string): string[] {
 export function buildSessionSheet(entry: Entry): string {
   const { step1, step2, step3, summary } = entry;
   const tone = toneOf(step1);
+  // 「繰り返していきたいこと」「分かち合いたいこと」の見出しは、まとめ画面の欄と同じく本人が選んだ種類で決める
+  const guidance = guidanceToneOf(step1);
   const out: string[] = ['【内的土壌 セッション準備シート】', `記入日：${formatDate(entry.createdAt)}`, ''];
 
   out.push('A．現在のテーマ', '');
@@ -132,8 +134,8 @@ export function buildSessionSheet(entry: Entry): string {
     .filter((s) => s.trim())
     .join('\n');
   out.push(...item(pick(SHEET_COPY.accept, tone), accept));
-  out.push(...item(pick(SHEET_COPY.nextSign, tone), summary.nextSign));
-  out.push(...item(pick(SHEET_COPY.coachNote, tone), summary.coachNote));
+  out.push(...item(pick(SHEET_COPY.nextSign, guidance), summary.nextSign));
+  out.push(...item(pick(SHEET_COPY.coachNote, guidance), summary.coachNote));
 
   return out.join('\n').replace(/\n{3,}/g, '\n\n').trim() + '\n';
 }

@@ -150,6 +150,17 @@ describe('うれしかった・満たされた出来事', () => {
     expect(sheet).toContain('■ セッションで話したいこと\n任せ方について');
   });
 
+  it('種類を選ばず、感情から「うれしかった」と判断しただけのときは、繰り返したいこと・分かち合いたいことの見出しにしない', () => {
+    const e = warm();
+    e.step1.tone = null;
+    e.step1.emotions = ['安心'];
+    const sheet = buildSessionSheet(e);
+    expect(sheet).toContain('■ 次に気づきたいサイン・繰り返していきたいこと\n相手の話を最後まで聞いてから伝える');
+    expect(sheet).toContain('■ セッションで話したいこと\nうれしかった経験を分かち合いたい');
+    // 問いの言い回しに合わせる見出しは、これまでどおり感情からも判断する
+    expect(sheet).toContain('■ 何が満たされていたと感じるか');
+  });
+
   it('種類を選んでいない記録は、シートに種類の行を出さない', () => {
     expect(buildSessionSheet(sample())).not.toContain('ふりかえった出来事');
   });

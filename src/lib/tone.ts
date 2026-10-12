@@ -18,6 +18,14 @@ export function toneOf(step1: Pick<Step1Data, 'tone' | 'emotions'>): Tone | null
   return step1.tone ?? inferTone(step1.emotions);
 }
 
+/** まとめの案内（この先の進め方・繰り返したいこと・分かち合いたいことの欄・シートの見出し）に使う種類。
+ *  「セッションで無理に扱わなくてよい」は本人が「うれしかった」を選んだときだけ案内するため、
+ *  種類を選んでいなければ、感情から「引っかかった」と判断できるときだけそれを使い、ほかは「両方ある」と同じ扱いにする */
+export function guidanceToneOf(step1: Pick<Step1Data, 'tone' | 'emotions'>): Tone | null {
+  if (step1.tone) return step1.tone;
+  return inferTone(step1.emotions) === 'negative' ? 'negative' : null;
+}
+
 /** 種類に合う文言を選ぶ。両方ある・判断できないときは、どちらにも合う文言 */
 export function pick<T>(variants: Variants<T>, tone: Tone | null): T {
   if (tone === 'negative') return variants.negative;

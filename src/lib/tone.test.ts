@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { inferTone, keepAnswered, pick, splitQuestions, toneOf } from './tone';
+import { guidanceToneOf, inferTone, keepAnswered, pick, splitQuestions, toneOf } from './tone';
 
 describe('inferTone / toneOf', () => {
   it('選んだ感情から出来事の種類を判断する', () => {
@@ -13,6 +13,23 @@ describe('inferTone / toneOf', () => {
   it('利用者が選んだ種類を優先する', () => {
     expect(toneOf({ tone: 'positive', emotions: ['悔しさ'] })).toBe('positive');
     expect(toneOf({ tone: null, emotions: ['悔しさ'] })).toBe('negative');
+  });
+});
+
+describe('guidanceToneOf', () => {
+  it('本人が選んだ種類はそのまま使う', () => {
+    expect(guidanceToneOf({ tone: 'positive', emotions: ['悔しさ'] })).toBe('positive');
+    expect(guidanceToneOf({ tone: 'mixed', emotions: [] })).toBe('mixed');
+  });
+
+  it('選んでいないときは、感情から「うれしかった」と判断しても「セッションで扱わなくてよい」の案内にはしない', () => {
+    expect(guidanceToneOf({ tone: null, emotions: ['安心'] })).toBeNull();
+    expect(guidanceToneOf({ tone: null, emotions: ['安心', '不安'] })).toBeNull();
+    expect(guidanceToneOf({ tone: null, emotions: [] })).toBeNull();
+  });
+
+  it('選んでいなくても、感情から「引っかかった」と判断できれば、セッションへつなぐ案内のまま', () => {
+    expect(guidanceToneOf({ tone: null, emotions: ['悔しさ'] })).toBe('negative');
   });
 });
 
