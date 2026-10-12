@@ -26,8 +26,9 @@
   color-scheme: light;
 }
 
-/* ダークモード（端末の設定に合わせて自動で切り替え）。紺を背景にして、金を差し色にする */
-@media (prefers-color-scheme: dark) {
+/* ダークモード（端末の設定に合わせて自動で切り替え）。紺を背景にして、金を差し色にする。
+   画面のときだけ使い、印刷はいつも明るい配色にする（紙に薄い文字が出ないように） */
+@media screen and (prefers-color-scheme: dark) {
   :root {
     --navy: #c09e5c;
     --navy-strong: #0f3152;
@@ -1206,7 +1207,7 @@ a {
   color: var(--gold-line);
 }
 
-@media (prefers-color-scheme: dark) {
+@media screen and (prefers-color-scheme: dark) {
   .start-card-primary .start-card-kicker {
     color: var(--on-navy);
     opacity: 0.75;
@@ -1417,7 +1418,7 @@ a {
 }
 
 /* ダークでは紺も金になるので、セッションで扱うステップは線と番号を控えめにして区別する */
-@media (prefers-color-scheme: dark) {
+@media screen and (prefers-color-scheme: dark) {
   .stepmap-session {
     border-left-color: var(--line);
   }
@@ -1449,7 +1450,7 @@ a {
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
 
-@media (prefers-color-scheme: dark) {
+@media screen and (prefers-color-scheme: dark) {
   .toast {
     background: var(--navy);
   }
