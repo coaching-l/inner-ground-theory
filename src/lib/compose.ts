@@ -133,7 +133,8 @@ export function buildSessionSheet(entry: Entry): string {
   const accept = [acceptanceSentence(entry), step3.acceptMode === 'notyet' ? step3.notYetNote : '']
     .filter((s) => s.trim())
     .join('\n');
-  out.push(...item(pick(SHEET_COPY.accept, tone), accept));
+  // ガイド第9章のシートと同じ見出し（「受け入れる」は願いとして書く。どの出来事でも同じ）
+  out.push(...item('受け入れたい現在の自分', accept));
   out.push(...item(pick(SHEET_COPY.nextSign, guidance), summary.nextSign));
   // うれしかった出来事で「しんどくなった」ときは、分かち合いではなくセッションで話したいこととして渡す
   const noteTone = guidance === 'positive' && summary.feeling === 'heavy' ? 'negative' : guidance;
