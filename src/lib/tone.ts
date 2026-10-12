@@ -18,6 +18,14 @@ export function toneOf(step1: Pick<Step1Data, 'tone' | 'emotions'>): Tone | null
   return step1.tone ?? inferTone(step1.emotions);
 }
 
+/** まとめの案内（この先の進め方・繰り返したいこと・分かち合いたいことの欄・シートの見出し）に使う種類。
+ *  「セッションで無理に扱わなくてよい」は本人が「うれしかった」を選んだときだけ案内するため、
+ *  種類を選んでいなければ、感情から「引っかかった」と判断できるときだけそれを使い、ほかは「両方ある」と同じ扱いにする */
+export function guidanceToneOf(step1: Pick<Step1Data, 'tone' | 'emotions'>): Tone | null {
+  if (step1.tone) return step1.tone;
+  return inferTone(step1.emotions) === 'negative' ? 'negative' : null;
+}
+
 /** 種類に合う文言を選ぶ。両方ある・判断できないときは、どちらにも合う文言 */
 export function pick<T>(variants: Variants<T>, tone: Tone | null): T {
   if (tone === 'negative') return variants.negative;
@@ -26,16 +34,19 @@ export function pick<T>(variants: Variants<T>, tone: Tone | null): T {
 }
 
 /** 種類に合う問いを先に出し、ほかの問いは「ほかの問い」に回す。
- *  引っかかった出来事のときは、うれしかった出来事を前提にした問いは出さない */
+ *  引っかかった出来事のときは、うれしかった出来事を前提にした問いは出さない（答えたことがある問いは残す） */
 export function splitQuestions(
   sets: { negative: string[]; positive: string[]; extra?: string[] },
   tone: Tone | null,
+  answers: Record<string, string> = {},
 ): { featured: string[]; more: string[] } {
   const featured = tone === 'positive' ? sets.positive : sets.negative;
   const rest = [
     ...(tone === 'positive' ? sets.negative : []),
     ...(sets.extra ?? []),
     ...(tone === 'mixed' || tone === null ? sets.positive : []),
+    // 種類を変える前に答えていた問いは、引っかかった出来事でも「ほかの問い」に残す
+    ...sets.positive.filter((q) => Object.hasOwn(answers, q)),
   ];
   return { featured, more: [...new Set(rest)].filter((q) => !featured.includes(q)) };
 }

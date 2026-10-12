@@ -302,6 +302,8 @@ a {
   display: block;
   font-weight: 700;
   margin-bottom: 4px;
+  /* 長い見出しの最後の1〜2文字だけが次の行に残らないように */
+  text-wrap: pretty;
 }
 
 .field-hint {
@@ -1107,6 +1109,7 @@ a {
   color: var(--navy);
   letter-spacing: 0.06em;
   margin-bottom: 4px;
+  text-wrap: pretty;
 }
 
 .card-quote-gold .card-quote-label {

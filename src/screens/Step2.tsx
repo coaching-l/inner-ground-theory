@@ -190,6 +190,7 @@ export function Step2({ entry, update, goStep, onExit }: EntryScreenProps) {
               const { featured, more } = splitQuestions(
                 { negative: d.featured, positive: d.positive, extra: d.more },
                 tone,
+                answers,
               );
               return (
                 <article key={id} className="domain-card">

@@ -114,15 +114,17 @@ export function App() {
         home();
       },
     };
+    // 記録ごとに画面の状態（開いた項目など）を作り直す
     screen =
       route.step === 1 ? (
-        <Step1 {...props} />
+        <Step1 key={entry.id} {...props} />
       ) : route.step === 2 ? (
-        <Step2 {...props} />
+        <Step2 key={entry.id} {...props} />
       ) : route.step === 3 ? (
-        <Step3 {...props} />
+        <Step3 key={entry.id} {...props} />
       ) : (
         <Summary
+          key={entry.id}
           {...props}
           onDelete={() => {
             removeEntry(entry.id);

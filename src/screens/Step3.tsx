@@ -88,6 +88,9 @@ export function Step3({ entry, update, goStep, onExit }: EntryScreenProps) {
             </div>
           </div>
 
+          {data.acceptMode === 'accept' && pick(STEP3_COPY.acceptHint, tone) && (
+            <p className="field-hint">{pick(STEP3_COPY.acceptHint, tone)}</p>
+          )}
           {data.acceptMode === 'accept' && (
             <div className="accept-sentence">
               <label htmlFor={acceptId}>{STEP3_COPY.acceptPrefix}</label>

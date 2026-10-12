@@ -38,6 +38,19 @@ describe('言い回しを変えた問い', () => {
     });
   });
 
+  it('STEP2の領域の問いも、以前の答えを今の言い回しの問いに引き継ぐ', () => {
+    const e = createEntry();
+    e.step2.answers = {
+      selfConcept: { 'この経験を中心に自分を語るとしたら、どのような物語になりますか': '人を支える物語' },
+      values: { 'どのようなときに、自分らしく生きていると感じますか': '人と話すとき' },
+    };
+    const answers = normalizeEntry(JSON.parse(JSON.stringify(e))).step2.answers;
+    expect(answers).toEqual({
+      selfConcept: { 'この経験も含めて自分を語るとしたら、どのような物語になりますか': '人を支える物語' },
+      values: { 'どのようなときに、自分らしく生きていると感じますか': '人と話すとき' },
+    });
+  });
+
   it('今の問いにすでに答えがあれば、そちらを残す', () => {
     const e = createEntry();
     e.step3.answers = {
