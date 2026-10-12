@@ -120,8 +120,8 @@ describe('うれしかった・満たされた出来事', () => {
     expect(draftUnderstanding(e)).toContain('私が評価（$&）と$$を大切にしている');
   });
 
-  it('まだ受け取れないときの一文も、うれしかった出来事に合わせる', () => {
-    expect(acceptanceSentence(warm())).toBe('まだ受け取りきれない。そう感じている自分がいる。');
+  it('まだ受け入れられないときの一文は、どの出来事でも同じ（「受け入れる」は最終段階）', () => {
+    expect(acceptanceSentence(warm())).toBe('まだ受け入れられない。そう感じている自分がいる。');
   });
 
   it('セッション準備シートに出来事の種類と、合う見出しを出す', () => {
@@ -129,7 +129,7 @@ describe('うれしかった・満たされた出来事', () => {
     expect(sheet).toContain('■ ふりかえった出来事：うれしかった・満たされた');
     expect(sheet).toContain('■ 何が満たされていたと感じるか\n人の役に立てている実感');
     expect(sheet).toContain('■ 何を大切にしていると知らせていたか');
-    expect(sheet).toContain('■ 受け取りたい現在の自分');
+    expect(sheet).toContain('■ 受け入れたい現在の自分\nまだ受け入れられない。そう感じている自分がいる。');
     expect(sheet).toContain('■ 繰り返していきたい考え方・動き方\n相手の話を最後まで聞いてから伝える');
     expect(sheet).toContain('■ コーチと分かち合いたいこと\nうれしかった経験を分かち合いたい');
     expect(sheet).not.toContain('次に気づきたいサイン');

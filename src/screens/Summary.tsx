@@ -9,7 +9,7 @@ import { copyText, canShare, shareText } from '../lib/clipboard';
 import { levelOf, orderEmotions } from '../lib/intensity';
 import { navigate } from '../lib/router';
 import { acceptanceSentence, buildSessionSheet, formatDate, understandingText } from '../lib/compose';
-import { guidanceToneOf, pick, toneOf } from '../lib/tone';
+import { guidanceToneOf, pick } from '../lib/tone';
 import type { Feeling, SummaryData, Tone } from '../lib/types';
 import type { EntryScreenProps } from './types';
 
@@ -17,8 +17,7 @@ export function Summary({ entry, update, goStep, onExit, onDelete }: EntryScreen
   const { step1, step2, step3, summary } = entry;
   const set = (patch: Partial<SummaryData>) => update((e) => ({ ...e, summary: { ...e.summary, ...patch } }));
   const setTone = (t: Tone | null) => update((e) => ({ ...e, step1: { ...e.step1, tone: t } }));
-  // 問いの言い回し（STEP3と同じ）は感情からの判断も使う。この先の案内は本人が選んだ種類で決める
-  const tone = toneOf(step1);
+  // この先の案内は、本人が選んだ種類で決める
   const guidance = guidanceToneOf(step1);
   // 種類を選ばないまま来たときだけ尋ねる（選んだあとも、この画面にいるあいだは選び直せるよう残す）
   const [askTone] = useState(() => step1.tone === null);
@@ -126,7 +125,7 @@ export function Summary({ entry, update, goStep, onExit, onDelete }: EntryScreen
           )}
           {acceptance && (
             <div className="card-quote card-quote-gold">
-              <p className="card-quote-label">{pick(SUMMARY_COPY.acceptCardLabel, tone)}</p>
+              <p className="card-quote-label">受容</p>
               <p>{acceptance}</p>
               {step3.acceptMode === 'notyet' && step3.notYetNote.trim() && (
                 <p className="card-sub prewrap">{step3.notYetNote}</p>
