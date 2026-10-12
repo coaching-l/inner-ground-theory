@@ -6,6 +6,7 @@ import type { Entry } from './types';
 
 const ENTRIES_KEY = 'inner-ground-note:entries:v1';
 const WELCOMED_KEY = 'inner-ground-note:welcomed:v1';
+const NAME_KEY = 'inner-ground-note:name:v1';
 
 export function isStorageAvailable(): boolean {
   try {
@@ -46,6 +47,24 @@ export function clearEntries(): void {
     window.localStorage.removeItem(ENTRIES_KEY);
   } catch {
     // 保存できない環境では何もしない
+  }
+}
+
+/** 出力に入れる名前（任意）。記録ごとではなく、この端末に一つだけ持つ */
+export function loadName(): string {
+  try {
+    return window.localStorage.getItem(NAME_KEY) ?? '';
+  } catch {
+    return '';
+  }
+}
+
+export function saveName(name: string): void {
+  try {
+    if (name.trim()) window.localStorage.setItem(NAME_KEY, name);
+    else window.localStorage.removeItem(NAME_KEY);
+  } catch {
+    // 保存できない環境では、この画面を開いているあいだだけ使われる
   }
 }
 

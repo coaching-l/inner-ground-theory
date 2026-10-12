@@ -995,6 +995,10 @@ a {
   margin: 16px 0 8px;
 }
 
+.name-field {
+  margin: 20px 0 0;
+}
+
 .tags {
   display: flex;
   flex-wrap: wrap;
@@ -1042,6 +1046,7 @@ a {
 
 .card-head {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: baseline;
   gap: 8px;
@@ -1053,11 +1058,25 @@ a {
 .card-brand {
   font-weight: 700;
   color: var(--heading);
+  white-space: nowrap;
 }
 
+/* 名前が長いときは、名前と日付を次の行へ送る（アプリ名は折り返さない） */
 .card-date {
   font-size: 13px;
   color: var(--muted);
+  margin-left: auto;
+  text-align: right;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.card-name {
+  font-weight: 700;
+  color: var(--text);
+  margin-right: 0.75em;
 }
 
 .card-list {

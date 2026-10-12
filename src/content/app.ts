@@ -205,6 +205,10 @@ export const RENAMED_QUESTIONS: Record<string, string> = {
 };
 
 export const SUMMARY_COPY = {
+  nameLabel: 'お名前（任意）',
+  nameHint:
+    '入れると、内省カードとセッション準備シート、印刷・PDFで保存するときのファイル名に入ります。空欄のままでも出力できます。この端末の中だけに保存され、次の記録でも使われます。',
+  namePlaceholder: '例：山田 花子',
   lead: {
     negative: 'ここまでの内容を一枚にまとめました。セッション前に見返したり、コーチに共有したりできます。',
     positive: '今回の気づきを一枚にまとめました。日常の中で見返したり、コーチに共有したりできます。',

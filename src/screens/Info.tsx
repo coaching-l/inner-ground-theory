@@ -56,7 +56,7 @@ export function Welcome(props: { onStart: () => void }) {
   );
 }
 
-export function About(props: { onClearAll: () => void }) {
+export function About(props: { onClearAll: () => void; hasName: boolean }) {
   return (
     <Page>
       <div className="step-heading">
@@ -102,6 +102,9 @@ export function About(props: { onClearAll: () => void }) {
             LINE などのアプリの中で開いたときと、ブラウザ（Safari・Chrome など）で開いたときとでは、保存場所が別々です。使うブラウザが違うときや、iPhone でホーム画面に追加したアイコンから開いたときも別になります。いつも同じ開き方で使ってください。
           </li>
           <li>
+            まとめ画面で入れたお名前（任意）も、この端末の中だけに保存されます。「すべての記録を削除」をすると、お名前も消えます。
+          </li>
+          <li>
             iPhone・Mac の Safari は、しばらく開かなかったサイトの記録を自動で消すことがあります。残しておきたい内容は、まとめ画面の「セッション準備シートをコピー」でメモアプリなどに貼り付けて、手元に残してください（「印刷・PDFで保存」で残せるのは、内省カードの部分だけです）。
           </li>
         </ul>
@@ -109,7 +112,10 @@ export function About(props: { onClearAll: () => void }) {
           type="button"
           className="btn btn-danger-text"
           onClick={() => {
-            if (window.confirm('すべての記録を削除しますか？元に戻せません。')) props.onClearAll();
+            const message = props.hasName
+              ? 'すべての記録とお名前を削除しますか？元に戻せません。'
+              : 'すべての記録を削除しますか？元に戻せません。';
+            if (window.confirm(message)) props.onClearAll();
           }}
         >
           すべての記録を削除

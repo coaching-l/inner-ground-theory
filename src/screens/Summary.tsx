@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { APP_NAME, SHEET_COPY, STEP1_COPY, SUMMARY_COPY } from '../content/app';
 import { DOMAIN_BY_ID } from '../content/domains';
 import { INTENSITY_LABELS } from '../content/reactions';
@@ -8,13 +8,23 @@ import { Field, Notice, Section } from '../components/ui';
 import { copyText, canShare, shareText } from '../lib/clipboard';
 import { levelOf, orderEmotions } from '../lib/intensity';
 import { navigate } from '../lib/router';
-import { acceptanceSentence, buildSessionSheet, formatDate, understandingText } from '../lib/compose';
+import { acceptanceSentence, buildSessionSheet, displayName, formatDate, NAME_MAX_LENGTH, printTitle, understandingText } from '../lib/compose';
 import { guidanceToneOf, pick } from '../lib/tone';
 import type { Feeling, SummaryData, Tone } from '../lib/types';
 import type { EntryScreenProps } from './types';
 
-export function Summary({ entry, update, goStep, onExit, onDelete }: EntryScreenProps & { onDelete: () => void }) {
+export function Summary({
+  entry,
+  update,
+  goStep,
+  onExit,
+  onDelete,
+  name,
+  onNameChange,
+}: EntryScreenProps & { onDelete: () => void; name: string; onNameChange: (name: string) => void }) {
   const { step1, step2, step3, summary } = entry;
+  const nameId = useId();
+  const shownName = displayName(name);
   const set = (patch: Partial<SummaryData>) => update((e) => ({ ...e, summary: { ...e.summary, ...patch } }));
   const setTone = (t: Tone | null) => update((e) => ({ ...e, step1: { ...e.step1, tone: t } }));
   // この先の案内は、本人が選んだ種類で決める
@@ -28,9 +38,31 @@ export function Summary({ entry, update, goStep, onExit, onDelete }: EntryScreen
   const acceptance = acceptanceSentence(entry);
 
   const copySheet = async () => {
-    const ok = await copyText(buildSessionSheet(entry));
+    const ok = await copyText(buildSessionSheet(entry, name));
     showToast(ok ? 'セッション準備シートをコピーしました' : 'コピーできませんでした');
   };
+
+  // 名前があるときだけ、印刷のあいだページの題名を変える（ブラウザが PDF のファイル名に使う）
+  const fileTitle = printTitle(entry, name);
+  useEffect(() => {
+    if (!fileTitle) return;
+    let saved: string | null = null;
+    const before = () => {
+      if (saved === null) saved = document.title;
+      document.title = fileTitle;
+    };
+    const after = () => {
+      if (saved !== null) document.title = saved;
+      saved = null;
+    };
+    window.addEventListener('beforeprint', before);
+    window.addEventListener('afterprint', after);
+    return () => {
+      after();
+      window.removeEventListener('beforeprint', before);
+      window.removeEventListener('afterprint', after);
+    };
+  }, [fileTitle]);
 
   return (
     <>
@@ -65,7 +97,10 @@ export function Summary({ entry, update, goStep, onExit, onDelete }: EntryScreen
         <article className="card print-area">
           <header className="card-head">
             <p className="card-brand">{APP_NAME}</p>
-            <p className="card-date">{formatDate(entry.createdAt)}</p>
+            <p className="card-date">
+              {shownName && <span className="card-name">{shownName}</span>}
+              <span className="nowrap">{formatDate(entry.createdAt)}</span>
+            </p>
           </header>
 
           <dl className="card-list">
@@ -192,6 +227,22 @@ export function Summary({ entry, update, goStep, onExit, onDelete }: EntryScreen
                   : pick(SUMMARY_COPY.bridge, guidance)}
             </p>
           </Notice>
+          <div className="field name-field">
+            <label className="field-label" htmlFor={nameId}>
+              {SUMMARY_COPY.nameLabel}
+            </label>
+            <p className="field-hint">{SUMMARY_COPY.nameHint}</p>
+            <input
+              id={nameId}
+              className="input"
+              type="text"
+              autoComplete="name"
+              maxLength={NAME_MAX_LENGTH}
+              value={name}
+              placeholder={SUMMARY_COPY.namePlaceholder}
+              onChange={(e) => onNameChange(e.target.value)}
+            />
+          </div>
           <div className="actions">
             <button type="button" className="btn btn-outline" onClick={copySheet}>
               セッション準備シートをコピー
@@ -200,7 +251,7 @@ export function Summary({ entry, update, goStep, onExit, onDelete }: EntryScreen
               <button
                 type="button"
                 className="btn btn-outline"
-                onClick={() => shareText(`${APP_NAME}｜セッション準備シート`, buildSessionSheet(entry))}
+                onClick={() => shareText(`${APP_NAME}｜セッション準備シート`, buildSessionSheet(entry, name))}
               >
                 共有する
               </button>
