@@ -34,16 +34,19 @@ export function pick<T>(variants: Variants<T>, tone: Tone | null): T {
 }
 
 /** 種類に合う問いを先に出し、ほかの問いは「ほかの問い」に回す。
- *  引っかかった出来事のときは、うれしかった出来事を前提にした問いは出さない */
+ *  引っかかった出来事のときは、うれしかった出来事を前提にした問いは出さない（答えたことがある問いは残す） */
 export function splitQuestions(
   sets: { negative: string[]; positive: string[]; extra?: string[] },
   tone: Tone | null,
+  answers: Record<string, string> = {},
 ): { featured: string[]; more: string[] } {
   const featured = tone === 'positive' ? sets.positive : sets.negative;
   const rest = [
     ...(tone === 'positive' ? sets.negative : []),
     ...(sets.extra ?? []),
     ...(tone === 'mixed' || tone === null ? sets.positive : []),
+    // 種類を変える前に答えていた問いは、引っかかった出来事でも「ほかの問い」に残す
+    ...sets.positive.filter((q) => Object.hasOwn(answers, q)),
   ];
   return { featured, more: [...new Set(rest)].filter((q) => !featured.includes(q)) };
 }

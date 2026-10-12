@@ -135,7 +135,9 @@ export function buildSessionSheet(entry: Entry): string {
     .join('\n');
   out.push(...item(pick(SHEET_COPY.accept, tone), accept));
   out.push(...item(pick(SHEET_COPY.nextSign, guidance), summary.nextSign));
-  out.push(...item(pick(SHEET_COPY.coachNote, guidance), summary.coachNote));
+  // うれしかった出来事で「しんどくなった」ときは、分かち合いではなくセッションで話したいこととして渡す
+  const noteTone = guidance === 'positive' && summary.feeling === 'heavy' ? 'negative' : guidance;
+  out.push(...item(pick(SHEET_COPY.coachNote, noteTone), summary.coachNote));
 
   return out.join('\n').replace(/\n{3,}/g, '\n\n').trim() + '\n';
 }

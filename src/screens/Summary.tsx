@@ -23,6 +23,8 @@ export function Summary({ entry, update, goStep, onExit, onDelete }: EntryScreen
   // 種類を選ばないまま来たときだけ尋ねる（選んだあとも、この画面にいるあいだは選び直せるよう残す）
   const [askTone] = useState(() => step1.tone === null);
   const heavyPositive = guidance === 'positive' && summary.feeling === 'heavy';
+  // うれしかった出来事で「しんどくなった」ときは、コーチと話したいことの欄もセッションへつなぐ言い方にする
+  const noteTone = heavyPositive ? 'negative' : guidance;
   const understanding = understandingText(entry);
   const acceptance = acceptanceSentence(entry);
 
@@ -41,6 +43,25 @@ export function Summary({ entry, update, goStep, onExit, onDelete }: EntryScreen
           <h1 className="step-title">今回の内省カード</h1>
           <p className="lead">{pick(SUMMARY_COPY.lead, guidance)}</p>
         </div>
+
+        {askTone && (
+          <Section title={SUMMARY_COPY.toneAskLabel} hint={SUMMARY_COPY.toneAskHint} className="no-print">
+            <div className="segmented segmented-stack" role="radiogroup" aria-label={SUMMARY_COPY.toneAskLabel}>
+              {STEP1_COPY.toneOptions.map((o) => (
+                <button
+                  key={o.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={step1.tone === o.id}
+                  className={step1.tone === o.id ? 'is-on' : ''}
+                  onClick={() => setTone(step1.tone === o.id ? null : (o.id as Tone))}
+                >
+                  {o.label}
+                </button>
+              ))}
+            </div>
+          </Section>
+        )}
 
         <article className="card print-area">
           <header className="card-head">
@@ -120,25 +141,6 @@ export function Summary({ entry, update, goStep, onExit, onDelete }: EntryScreen
           )}
         </article>
 
-        {askTone && (
-          <Section title={SUMMARY_COPY.toneAskLabel} hint={SUMMARY_COPY.toneAskHint} className="no-print">
-            <div className="segmented segmented-stack" role="radiogroup" aria-label={SUMMARY_COPY.toneAskLabel}>
-              {STEP1_COPY.toneOptions.map((o) => (
-                <button
-                  key={o.id}
-                  type="button"
-                  role="radio"
-                  aria-checked={step1.tone === o.id}
-                  className={step1.tone === o.id ? 'is-on' : ''}
-                  onClick={() => setTone(step1.tone === o.id ? null : (o.id as Tone))}
-                >
-                  {o.label}
-                </button>
-              ))}
-            </div>
-          </Section>
-        )}
-
         <Section className="no-print">
           <Field
             label={pick(SUMMARY_COPY.nextSignLabel, guidance)}
@@ -148,10 +150,11 @@ export function Summary({ entry, update, goStep, onExit, onDelete }: EntryScreen
             placeholder={pick(SUMMARY_COPY.nextSignPlaceholder, guidance)}
           />
           <Field
-            label={pick(SUMMARY_COPY.coachNoteLabel, guidance)}
+            label={pick(SUMMARY_COPY.coachNoteLabel, noteTone)}
+            hint={pick(SUMMARY_COPY.coachNoteHint, noteTone)}
             value={summary.coachNote}
             onChange={(coachNote) => set({ coachNote })}
-            placeholder={pick(SUMMARY_COPY.coachNotePlaceholder, guidance)}
+            placeholder={heavyPositive ? SUMMARY_COPY.coachNotePlaceholderHeavy : pick(SUMMARY_COPY.coachNotePlaceholder, noteTone)}
           />
         </Section>
 

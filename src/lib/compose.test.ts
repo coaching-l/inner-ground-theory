@@ -136,6 +136,12 @@ describe('うれしかった・満たされた出来事', () => {
     expect(sheet).toContain('感情：喜び、感謝（とても強い）、不安');
   });
 
+  it('うれしかった出来事で「しんどくなった」ときは、コーチへの欄を「セッションで話したいこと」として渡す', () => {
+    const e = warm();
+    e.summary.feeling = 'heavy';
+    expect(buildSessionSheet(e)).toContain('■ セッションで話したいこと\nうれしかった経験を分かち合いたい');
+  });
+
   it('両方あるときは、シートだけ見てもわかる言い方にする', () => {
     const e = warm();
     e.step1.tone = 'mixed';

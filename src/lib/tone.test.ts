@@ -55,6 +55,10 @@ describe('splitQuestions', () => {
   it('引っかかった出来事では、うれしかった出来事を前提にした問いは出さない', () => {
     expect(splitQuestions(sets, 'negative')).toEqual({ featured: ['n1', 'n2'], more: ['e1'] });
   });
+  it('引っかかった出来事に変えても、答えたことがあるうれしかった出来事の問いは「ほかの問い」に残す', () => {
+    expect(splitQuestions(sets, 'negative', { p1: '答え' })).toEqual({ featured: ['n1', 'n2'], more: ['e1', 'p1'] });
+    expect(splitQuestions(sets, 'negative', { p1: '' })).toEqual({ featured: ['n1', 'n2'], more: ['e1', 'p1'] });
+  });
 });
 
 describe('keepAnswered', () => {
