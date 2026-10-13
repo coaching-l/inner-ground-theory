@@ -1061,22 +1061,20 @@ a {
   white-space: nowrap;
 }
 
-/* 名前が長いときは、名前と日付を次の行へ送る（アプリ名は折り返さない） */
 .card-date {
   font-size: 13px;
   color: var(--muted);
   margin-left: auto;
-  text-align: right;
-}
-
-.nowrap {
   white-space: nowrap;
 }
 
+/* 名前（任意）は、アプリ名と日付の下に1行で置く。長い名前も枠からはみ出さない */
 .card-name {
+  flex-basis: 100%;
+  font-size: 14px;
   font-weight: 700;
   color: var(--text);
-  margin-right: 0.75em;
+  overflow-wrap: anywhere;
 }
 
 .card-list {

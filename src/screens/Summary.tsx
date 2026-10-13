@@ -97,10 +97,8 @@ export function Summary({
         <article className="card print-area">
           <header className="card-head">
             <p className="card-brand">{APP_NAME}</p>
-            <p className="card-date">
-              {shownName && <span className="card-name">{shownName}</span>}
-              <span className="nowrap">{formatDate(entry.createdAt)}</span>
-            </p>
+            <p className="card-date">{formatDate(entry.createdAt)}</p>
+            {shownName && <p className="card-name">{shownName}</p>}
           </header>
 
           <dl className="card-list">
@@ -231,12 +229,16 @@ export function Summary({
             <label className="field-label" htmlFor={nameId}>
               {SUMMARY_COPY.nameLabel}
             </label>
-            <p className="field-hint">{SUMMARY_COPY.nameHint}</p>
+            <p className="field-hint" id={`${nameId}-hint`}>
+              {SUMMARY_COPY.nameHint}
+            </p>
             <input
               id={nameId}
+              aria-describedby={`${nameId}-hint`}
               className="input"
               type="text"
-              autoComplete="name"
+              // ブラウザの自動入力の記録に名前を残さない（「すべての記録を削除」で消えなくなるため）
+              autoComplete="off"
               maxLength={NAME_MAX_LENGTH}
               value={name}
               placeholder={SUMMARY_COPY.namePlaceholder}

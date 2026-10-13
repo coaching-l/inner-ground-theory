@@ -88,7 +88,9 @@ export const NAME_MAX_LENGTH = 40;
 
 /** 出力に入れる名前。改行や連続する空白は1つの空白にまとめる。空なら '' */
 export function displayName(name: string): string {
-  return name.replace(/\s+/gu, ' ').trim().slice(0, NAME_MAX_LENGTH);
+  const s = name.replace(/\s+/gu, ' ').trim();
+  // 絵文字などを途中で切らないよう、UTF-16 の単位ではなく文字（コードポイント）で数える
+  return Array.from(s).slice(0, NAME_MAX_LENGTH).join('').trim();
 }
 
 /**

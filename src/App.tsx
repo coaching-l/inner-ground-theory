@@ -164,10 +164,11 @@ export function App() {
         <About
           hasName={name.trim() !== ''}
           onClearAll={() => {
+            const hadName = name.trim() !== '';
             clearEntries();
             setEntries([]);
             setName('');
-            showToast('すべての記録を削除しました');
+            showToast(hadName ? 'すべての記録とお名前を削除しました' : 'すべての記録を削除しました');
           }}
         />
       </>

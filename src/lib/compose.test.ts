@@ -200,6 +200,7 @@ describe('お名前（任意）', () => {
     expect(displayName('山田\n\n花子')).toBe('山田 花子');
     expect(displayName(' \n ')).toBe('');
     expect(displayName('あ'.repeat(60))).toHaveLength(NAME_MAX_LENGTH);
+    expect(displayName('a' + '😀'.repeat(45))).toBe('a' + '😀'.repeat(39));
   });
 
   it('印刷の題名（PDFのファイル名）は、名前があるときだけ作る', () => {
