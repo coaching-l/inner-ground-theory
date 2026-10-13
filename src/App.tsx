@@ -4,7 +4,16 @@ import { showToast, Toast } from './components/Toast';
 import { Notice } from './components/ui';
 import { createEntry, hasStep1Content } from './lib/entry';
 import { navigate, useRoute } from './lib/router';
-import { clearEntries, hasWelcomed, isStorageAvailable, loadEntries, markWelcomed, saveEntries } from './lib/storage';
+import {
+  clearEntries,
+  hasWelcomed,
+  isStorageAvailable,
+  loadEntries,
+  loadName,
+  markWelcomed,
+  saveEntries,
+  saveName,
+} from './lib/storage';
 import type { Entry, EntryStatus, StepNo } from './lib/types';
 import { History, Home } from './screens/Home';
 import { About, Welcome } from './screens/Info';
@@ -27,10 +36,16 @@ export function App() {
   const [entries, setEntries] = useState<Entry[]>(() => loadEntries());
   const [welcomed, setWelcomed] = useState(() => hasWelcomed());
   const [storageOk] = useState(() => isStorageAvailable());
+  // 出力に入れる名前（任意）。どの記録にも同じ名前を使う
+  const [name, setName] = useState(() => loadName());
 
   useEffect(() => {
     saveEntries(entries);
   }, [entries]);
+
+  useEffect(() => {
+    saveName(name);
+  }, [name]);
 
   // 何も書かずに閉じた記録は、一覧に残さない
   useEffect(() => {
@@ -126,6 +141,8 @@ export function App() {
         <Summary
           key={entry.id}
           {...props}
+          name={name}
+          onNameChange={setName}
           onDelete={() => {
             removeEntry(entry.id);
             showToast('削除しました');
@@ -145,10 +162,13 @@ export function App() {
       <>
         <TopBar onBack={home} backLabel="ホーム" />
         <About
+          hasName={name.trim() !== ''}
           onClearAll={() => {
+            const hadName = name.trim() !== '';
             clearEntries();
             setEntries([]);
-            showToast('すべての記録を削除しました');
+            setName('');
+            showToast(hadName ? 'すべての記録とお名前を削除しました' : 'すべての記録を削除しました');
           }}
         />
       </>

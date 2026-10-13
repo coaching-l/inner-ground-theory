@@ -1,5 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { acceptanceSentence, buildSessionSheet, clean, draftUnderstanding, joinJa, understandingText } from './compose';
+import {
+  acceptanceSentence,
+  buildSessionSheet,
+  clean,
+  displayName,
+  draftUnderstanding,
+  joinJa,
+  NAME_MAX_LENGTH,
+  printTitle,
+  understandingText,
+} from './compose';
 import { createEntry } from './entry';
 import type { Entry } from './types';
 
@@ -75,7 +85,7 @@ describe('acceptanceSentence', () => {
 });
 
 describe('buildSessionSheet', () => {
-  it('ガイド第9章のA・B・Cの順にまとめ、空欄の項目は出さない', () => {
+  it('ガイド第10章のA・B・Cの順にまとめ、空欄の項目は出さない', () => {
     const sheet = buildSessionSheet(sample());
     const a = sheet.indexOf('A．現在のテーマ');
     const b = sheet.indexOf('B．関係していそうな自己知識の領域');
@@ -169,5 +179,38 @@ describe('うれしかった・満たされた出来事', () => {
 
   it('種類を選んでいない記録は、シートに種類の行を出さない', () => {
     expect(buildSessionSheet(sample())).not.toContain('ふりかえった出来事');
+  });
+});
+
+describe('お名前（任意）', () => {
+  it('名前がなければ、シートは今までどおり（お名前の行を出さない）', () => {
+    const e = sample();
+    expect(buildSessionSheet(e)).toBe(buildSessionSheet(e, ''));
+    expect(buildSessionSheet(e, '   ')).toBe(buildSessionSheet(e));
+    expect(buildSessionSheet(e)).not.toContain('お名前');
+    expect(buildSessionSheet(e).split('\n').slice(0, 2)).toEqual(['【内的土壌 セッション準備シート】', '記入日：2026年10月9日(金)']);
+  });
+
+  it('名前があれば、見出しのすぐ下に入れる', () => {
+    const lines = buildSessionSheet(sample(), '  山田　花子 \n').split('\n');
+    expect(lines.slice(0, 3)).toEqual(['【内的土壌 セッション準備シート】', 'お名前：山田 花子', '記入日：2026年10月9日(金)']);
+  });
+
+  it('改行や連続する空白はまとめ、長すぎる名前は切る', () => {
+    expect(displayName('山田\n\n花子')).toBe('山田 花子');
+    expect(displayName(' \n ')).toBe('');
+    expect(displayName('あ'.repeat(60))).toHaveLength(NAME_MAX_LENGTH);
+    expect(displayName('a' + '😀'.repeat(45))).toBe('a' + '😀'.repeat(39));
+  });
+
+  it('印刷の題名（PDFのファイル名）は、名前があるときだけ作る', () => {
+    const e = sample();
+    expect(printTitle(e, '')).toBeNull();
+    expect(printTitle(e, '  ')).toBeNull();
+    expect(printTitle(e, '山田 花子')).toBe('内的土壌ノート_山田 花子_2026年10月9日');
+  });
+
+  it('ファイル名に使えない文字は置き換える', () => {
+    expect(printTitle(sample(), 'a/b\\c:d*e?f"g<h>i|j')).toBe('内的土壌ノート_a_b_c_d_e_f_g_h_i_j_2026年10月9日');
   });
 });

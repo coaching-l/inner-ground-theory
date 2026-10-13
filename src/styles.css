@@ -995,6 +995,10 @@ a {
   margin: 16px 0 8px;
 }
 
+.name-field {
+  margin: 20px 0 0;
+}
+
 .tags {
   display: flex;
   flex-wrap: wrap;
@@ -1042,6 +1046,7 @@ a {
 
 .card-head {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: baseline;
   gap: 8px;
@@ -1053,11 +1058,23 @@ a {
 .card-brand {
   font-weight: 700;
   color: var(--heading);
+  white-space: nowrap;
 }
 
 .card-date {
   font-size: 13px;
   color: var(--muted);
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+/* 名前（任意）は、アプリ名と日付の下に1行で置く。長い名前も枠からはみ出さない */
+.card-name {
+  flex-basis: 100%;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  overflow-wrap: anywhere;
 }
 
 .card-list {

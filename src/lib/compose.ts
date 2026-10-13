@@ -1,6 +1,6 @@
 // 回答から文章を組み立てる（つながりの一文・受容の一文・セッション準備シート）
 
-import { SHEET_COPY, STEP3_COPY } from '../content/app';
+import { APP_NAME, SHEET_COPY, STEP3_COPY } from '../content/app';
 import { DOMAIN_BY_ID } from '../content/domains';
 import { INTENSITY_LABELS } from '../content/reactions';
 import { SIGNS } from '../content/signs';
@@ -84,13 +84,34 @@ function item(label: string, value: string): string[] {
   return v ? [`■ ${label}`, v, ''] : [];
 }
 
-/** ガイド第9章「セッション準備・振り返りシート」の形でテキストにする */
-export function buildSessionSheet(entry: Entry): string {
+export const NAME_MAX_LENGTH = 40;
+
+/** 出力に入れる名前。改行や連続する空白は1つの空白にまとめる。空なら '' */
+export function displayName(name: string): string {
+  const s = name.replace(/\s+/gu, ' ').trim();
+  // 絵文字などを途中で切らないよう、UTF-16 の単位ではなく文字（コードポイント）で数える
+  return Array.from(s).slice(0, NAME_MAX_LENGTH).join('').trim();
+}
+
+/**
+ * 印刷・PDF保存のときのページの題名（ブラウザが PDF のファイル名に使う）。
+ * 名前がなければ null を返し、題名は変えない
+ */
+export function printTitle(entry: Entry, name: string): string | null {
+  const n = displayName(name).replace(/[\\/:*?"<>|]/gu, '_');
+  if (!n) return null;
+  const date = new Intl.DateTimeFormat('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(entry.createdAt));
+  return `${APP_NAME}_${n}_${date}`;
+}
+
+/** ガイド第10章「セッション準備・振り返りシート」の形でテキストにする。名前は任意 */
+export function buildSessionSheet(entry: Entry, name = ''): string {
   const { step1, step2, step3, summary } = entry;
   const tone = toneOf(step1);
   // 「繰り返していきたいこと」「分かち合いたいこと」の見出しは、まとめ画面の欄と同じく本人が選んだ種類で決める
   const guidance = guidanceToneOf(step1);
-  const out: string[] = ['【内的土壌 セッション準備シート】', `記入日：${formatDate(entry.createdAt)}`, ''];
+  const n = displayName(name);
+  const out: string[] = ['【内的土壌 セッション準備シート】', ...(n ? [`お名前：${n}`] : []), `記入日：${formatDate(entry.createdAt)}`, ''];
 
   out.push('A．現在のテーマ', '');
   if (step1.tone) out.push(`■ ${SHEET_COPY.toneLabel}：${SHEET_COPY.toneValue[step1.tone]}`, '');
@@ -133,7 +154,7 @@ export function buildSessionSheet(entry: Entry): string {
   const accept = [acceptanceSentence(entry), step3.acceptMode === 'notyet' ? step3.notYetNote : '']
     .filter((s) => s.trim())
     .join('\n');
-  // ガイド第9章のシートと同じ見出し（「受け入れる」は願いとして書く。どの出来事でも同じ）
+  // ガイド第10章のシートと同じ見出し（「受け入れる」は願いとして書く。どの出来事でも同じ）
   out.push(...item('受け入れたい現在の自分', accept));
   out.push(...item(pick(SHEET_COPY.nextSign, guidance), summary.nextSign));
   // うれしかった出来事で「しんどくなった」ときは、分かち合いではなくセッションで話したいこととして渡す
