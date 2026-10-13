@@ -122,7 +122,7 @@ export function About(props: { onClearAll: () => void; hasName: boolean }) {
         </button>
       </Section>
       <p className="small center">
-        出典：{BRAND}「内的土壌理論・内的土壌成長モデル 統合実践ガイド」Ver1.1
+        出典：{BRAND}「内的土壌理論・内的土壌成長モデル 統合実践ガイド」Ver1.2
         <br />© {BRAND}
       </p>
     </Page>

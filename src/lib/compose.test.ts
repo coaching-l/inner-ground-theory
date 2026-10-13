@@ -85,7 +85,7 @@ describe('acceptanceSentence', () => {
 });
 
 describe('buildSessionSheet', () => {
-  it('ガイド第9章のA・B・Cの順にまとめ、空欄の項目は出さない', () => {
+  it('ガイド第10章のA・B・Cの順にまとめ、空欄の項目は出さない', () => {
     const sheet = buildSessionSheet(sample());
     const a = sheet.indexOf('A．現在のテーマ');
     const b = sheet.indexOf('B．関係していそうな自己知識の領域');

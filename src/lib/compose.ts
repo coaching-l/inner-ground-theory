@@ -104,7 +104,7 @@ export function printTitle(entry: Entry, name: string): string | null {
   return `${APP_NAME}_${n}_${date}`;
 }
 
-/** ガイド第9章「セッション準備・振り返りシート」の形でテキストにする。名前は任意 */
+/** ガイド第10章「セッション準備・振り返りシート」の形でテキストにする。名前は任意 */
 export function buildSessionSheet(entry: Entry, name = ''): string {
   const { step1, step2, step3, summary } = entry;
   const tone = toneOf(step1);
@@ -154,7 +154,7 @@ export function buildSessionSheet(entry: Entry, name = ''): string {
   const accept = [acceptanceSentence(entry), step3.acceptMode === 'notyet' ? step3.notYetNote : '']
     .filter((s) => s.trim())
     .join('\n');
-  // ガイド第9章のシートと同じ見出し（「受け入れる」は願いとして書く。どの出来事でも同じ）
+  // ガイド第10章のシートと同じ見出し（「受け入れる」は願いとして書く。どの出来事でも同じ）
   out.push(...item('受け入れたい現在の自分', accept));
   out.push(...item(pick(SHEET_COPY.nextSign, guidance), summary.nextSign));
   // うれしかった出来事で「しんどくなった」ときは、分かち合いではなくセッションで話したいこととして渡す
