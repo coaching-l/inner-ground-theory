@@ -262,6 +262,7 @@ export function Summary({
               印刷・PDFで保存
             </button>
           </div>
+          <p className="send-note">{SUMMARY_COPY.sendNote}</p>
           <button
             type="button"
             className="btn btn-danger-text"
