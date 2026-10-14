@@ -999,6 +999,13 @@ a {
   margin: 20px 0 0;
 }
 
+.send-note {
+  font-size: 14px;
+  color: var(--muted);
+  margin: 0 0 12px;
+  text-wrap: pretty;
+}
+
 .tags {
   display: flex;
   flex-wrap: wrap;
